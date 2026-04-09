@@ -1,0 +1,211 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fffdf5;
+  --foreground: #1e293b;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #8b5cf6;
+  --accent-foreground: #ffffff;
+  --secondary: #f472b6;
+  --tertiary: #fbbf24;
+  --quaternary: #34d399;
+  --border: #e2e8f0;
+  --input: #ffffff;
+  --card: #ffffff;
+  --ring: #8b5cf6;
+  --button-shadow-offset: 4px;
+  --button-shadow-hover: 6px;
+  --button-shadow-active: 2px;
+  --card-shadow-offset: 8px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+  --color-quaternary: var(--quaternary);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-card: var(--card);
+  --color-ring: var(--ring);
+  --font-heading: "Outfit", "Avenir Next", "Segoe UI", sans-serif;
+  --font-body: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--tertiary) 20%, transparent), transparent 26%),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--secondary) 16%, transparent), transparent 24%),
+    var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  font-kerning: normal;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 28%, white);
+  color: var(--foreground);
+}
+
+@layer base {
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 4px;
+  }
+}
+
+@layer components {
+  .section-shell {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .nav-sticker {
+    @apply rounded-full border-2 border-foreground bg-background px-4 py-3 shadow-[4px_4px_0_0_var(--foreground)] sm:px-5;
+  }
+
+  .nav-pill {
+    @apply inline-flex min-h-11 flex-col justify-center rounded-full border-2 border-transparent px-4 py-2 text-sm font-bold text-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground hover:bg-card hover:shadow-[3px_3px_0_0_var(--foreground)];
+  }
+
+  .eyebrow-pill {
+    @apply rounded-full border-2 border-foreground bg-card px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-foreground shadow-[4px_4px_0_0_var(--tertiary)];
+  }
+
+  .icon-medallion {
+    @apply inline-flex h-12 w-12 items-center justify-center rounded-full border-2 border-foreground shadow-[4px_4px_0_0_var(--foreground)];
+  }
+
+  .floating-icon {
+    @apply absolute -top-6 left-6 inline-flex h-14 w-14 items-center justify-center rounded-full border-2 border-foreground shadow-[4px_4px_0_0_var(--foreground)];
+  }
+
+  .sticker-card {
+    @apply relative rounded-[24px] border-2 border-foreground bg-card p-6 transition-transform duration-300 ease-out hover:-rotate-1 hover:scale-[1.01] sm:p-7;
+    box-shadow: var(--card-shadow-offset) var(--card-shadow-offset) 0 0 var(--card-shadow, var(--muted));
+  }
+
+  .candy-button {
+    @apply inline-flex min-h-12 items-center justify-between gap-3 rounded-full border-2 border-foreground bg-accent px-5 py-3 text-white transition-all duration-300 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5;
+    box-shadow: var(--button-shadow-offset) var(--button-shadow-offset) 0 0 var(--foreground);
+  }
+
+  .candy-button:hover {
+    box-shadow: var(--button-shadow-hover) var(--button-shadow-hover) 0 0 var(--foreground);
+  }
+
+  .candy-button:active {
+    box-shadow: var(--button-shadow-active) var(--button-shadow-active) 0 0 var(--foreground);
+  }
+
+  .outline-button {
+    @apply inline-flex min-h-12 items-center justify-between gap-3 rounded-full border-2 border-foreground bg-transparent px-5 py-3 text-foreground transition-all duration-300 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-tertiary active:translate-x-0.5 active:translate-y-0.5;
+  }
+
+  .button-arrow {
+    @apply inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-foreground bg-white text-foreground;
+  }
+
+  .hero-figure {
+    @apply relative overflow-hidden rounded-[36px] border-2 border-foreground bg-card p-5 shadow-[8px_8px_0_0_var(--secondary)] sm:p-6;
+  }
+
+  .hero-blob {
+    border-radius: 42px 42px 120px 120px;
+  }
+
+  .marquee-shell {
+    @apply overflow-hidden rounded-full border-2 border-foreground bg-secondary/20 px-0 py-4 shadow-[6px_6px_0_0_var(--foreground)];
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    gap: 1rem;
+    padding-inline: 1rem;
+    animation: marquee 28s linear infinite;
+  }
+
+  .dot-grid {
+    background-image:
+      radial-gradient(circle, color-mix(in srgb, var(--foreground) 16%, transparent) 1.1px, transparent 1.2px);
+    background-size: 18px 18px;
+    background-position: center;
+  }
+
+  .stripe-fill {
+    background-image: repeating-linear-gradient(
+      -35deg,
+      transparent 0 10px,
+      color-mix(in srgb, var(--foreground) 12%, transparent) 10px 18px
+    );
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --button-shadow-offset: 2px;
+    --button-shadow-hover: 3px;
+    --button-shadow-active: 1px;
+    --card-shadow-offset: 4px;
+  }
+
+  .marquee-shell {
+    @apply rounded-[28px];
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
