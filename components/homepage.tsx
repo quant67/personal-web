@@ -1,4 +1,12 @@
-import type { CSSProperties, ElementType } from "react";
+"use client";
+
+import {
+  type CSSProperties,
+  type ElementType,
+  startTransition,
+  useEffect,
+  useSyncExternalStore,
+} from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
@@ -15,8 +23,14 @@ import {
   siteContent,
   type AccentTone,
   type IconKey,
+  type Locale,
   type LocalizedText,
 } from "@/lib/site-content";
+
+const STORAGE_KEY = "personal-web-locale";
+const DEFAULT_LOCALE: Locale = "zh";
+
+const localeListeners = new Set<() => void>();
 
 const iconMap: Record<IconKey, LucideIcon> = {
   sparkles: Sparkles,
@@ -32,7 +46,6 @@ const toneStyles: Record<
   AccentTone,
   {
     chip: string;
-    badge: string;
     icon: string;
     ring: string;
     shadow: string;
@@ -40,28 +53,24 @@ const toneStyles: Record<
 > = {
   accent: {
     chip: "bg-accent/12 text-accent",
-    badge: "bg-accent text-white",
     icon: "bg-accent text-white",
     ring: "outline-accent/40",
     shadow: "var(--accent)",
   },
   secondary: {
     chip: "bg-secondary/12 text-foreground",
-    badge: "bg-secondary text-foreground",
     icon: "bg-secondary text-foreground",
     ring: "outline-secondary/50",
     shadow: "var(--secondary)",
   },
   tertiary: {
     chip: "bg-tertiary/18 text-foreground",
-    badge: "bg-tertiary text-foreground",
     icon: "bg-tertiary text-foreground",
     ring: "outline-tertiary/50",
     shadow: "var(--tertiary)",
   },
   quaternary: {
     chip: "bg-quaternary/16 text-foreground",
-    badge: "bg-quaternary text-foreground",
     icon: "bg-quaternary text-foreground",
     ring: "outline-quaternary/50",
     shadow: "var(--quaternary)",
@@ -69,19 +78,29 @@ const toneStyles: Record<
 };
 
 export function Homepage() {
+  const locale = useSyncExternalStore(
+    subscribeToLocale,
+    getLocaleSnapshot,
+    getServerLocaleSnapshot,
+  );
+
+  useEffect(() => {
+    document.documentElement.lang = locale === "zh" ? "zh-CN" : "en";
+  }, [locale]);
+
   const marqueeItems = [...siteContent.keywords.items, ...siteContent.keywords.items];
 
   return (
     <div className="overflow-x-clip bg-background text-foreground">
       <a className="sr-only focus:not-sr-only" href="#main-content">
-        Skip to content
+        {localized(siteContent.ui.skipToContent, locale)}
       </a>
-      <SiteNav />
+      <SiteNav locale={locale} onLocaleChange={setStoredLocale} />
       <main id="main-content" className="pb-10">
-        <HeroSection />
+        <HeroSection locale={locale} />
         <section aria-labelledby="keywords-heading" className="section-shell py-8 sm:py-10">
           <h2 id="keywords-heading" className="sr-only">
-            {siteContent.keywords.heading.en}
+            {localized(siteContent.keywords.heading, locale)}
           </h2>
           <div className="marquee-shell">
             <div className="marquee-track">
@@ -89,12 +108,10 @@ export function Homepage() {
                 <span
                   key={`${item.en}-${index}`}
                   className="inline-flex items-center gap-3 whitespace-nowrap rounded-full border-2 border-foreground bg-card px-4 py-2 text-sm font-semibold text-foreground"
+                  lang={localeLang(locale)}
                 >
                   <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-secondary" />
-                  <span>{item.zh}</span>
-                  <span className="text-muted-foreground" lang="en">
-                    {item.en}
-                  </span>
+                  <span>{localized(item, locale)}</span>
                 </span>
               ))}
             </div>
@@ -106,6 +123,7 @@ export function Homepage() {
             icon="code"
             tone="accent"
             heading={siteContent.openSourceProjects.heading}
+            locale={locale}
           />
           <div className="relative mt-10">
             <ProjectConnector />
@@ -122,6 +140,7 @@ export function Homepage() {
                   action={siteContent.ui.visitProject}
                   href={item.href}
                   ariaLabel={item.ariaLabel}
+                  locale={locale}
                 />
               ))}
             </div>
@@ -133,12 +152,14 @@ export function Homepage() {
             icon="sparkles"
             tone="secondary"
             heading={siteContent.experiments.heading}
+            locale={locale}
           />
           <div className="mt-10 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
             {siteContent.experiments.items.map((item, index) => (
               <ExperimentCard
                 key={item.title.en}
                 item={item}
+                locale={locale}
                 mirrored={index % 2 === 1}
               />
             ))}
@@ -150,10 +171,11 @@ export function Homepage() {
             icon="book"
             tone="tertiary"
             heading={siteContent.writing.heading}
+            locale={locale}
           />
           <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {siteContent.writing.items.map((item) => (
-              <WritingCard key={item.title.en} item={item} />
+              <WritingCard key={item.title.en} item={item} locale={locale} />
             ))}
           </div>
         </section>
@@ -165,6 +187,7 @@ export function Homepage() {
                 icon="globe"
                 tone="quaternary"
                 heading={siteContent.socialLinks.heading}
+                locale={locale}
               />
               <span
                 aria-hidden="true"
@@ -173,18 +196,68 @@ export function Homepage() {
             </div>
             <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
               {siteContent.socialLinks.items.map((item) => (
-                <SocialCard key={item.title.en} item={item} />
+                <SocialCard key={item.title.en} item={item} locale={locale} />
               ))}
             </div>
           </div>
         </section>
       </main>
-      <FooterNote />
+      <FooterNote locale={locale} />
     </div>
   );
 }
 
-function SiteNav() {
+function subscribeToLocale(listener: () => void) {
+  localeListeners.add(listener);
+
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key === STORAGE_KEY) {
+      listener();
+    }
+  };
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("storage", handleStorage);
+  }
+
+  return () => {
+    localeListeners.delete(listener);
+
+    if (typeof window !== "undefined") {
+      window.removeEventListener("storage", handleStorage);
+    }
+  };
+}
+
+function getLocaleSnapshot(): Locale {
+  if (typeof window === "undefined") {
+    return DEFAULT_LOCALE;
+  }
+
+  const storedLocale = window.localStorage.getItem(STORAGE_KEY);
+
+  return storedLocale === "zh" || storedLocale === "en" ? storedLocale : DEFAULT_LOCALE;
+}
+
+function getServerLocaleSnapshot(): Locale {
+  return DEFAULT_LOCALE;
+}
+
+function setStoredLocale(nextLocale: Locale) {
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem(STORAGE_KEY, nextLocale);
+  }
+
+  localeListeners.forEach((listener) => listener());
+}
+
+function SiteNav({
+  locale,
+  onLocaleChange,
+}: {
+  locale: Locale;
+  onLocaleChange: (locale: Locale) => void;
+}) {
   return (
     <header className="section-shell sticky top-0 z-50 pt-4">
       <div className="nav-sticker flex flex-wrap items-center justify-between gap-4">
@@ -193,34 +266,65 @@ function SiteNav() {
             <Sparkles aria-hidden="true" className="h-4 w-4" strokeWidth={2.5} />
           </div>
           <div>
-            <p className="font-heading text-base font-extrabold tracking-tight">
-              {siteContent.brand.name.zh}
+            <p
+              className="font-heading text-base font-extrabold tracking-tight"
+              lang={localeLang(locale)}
+            >
+              {localized(siteContent.brand.name, locale)}
             </p>
             <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
-              {siteContent.brand.name.en}
+              sixsevenlabs.xyz
             </p>
           </div>
         </div>
-        <nav aria-label={siteContent.navigationAriaLabel.en} className="overflow-x-auto">
-          <ul className="flex min-w-max items-center gap-2">
-            {siteContent.navigation.map((item) => (
-              <li key={item.href}>
-                <a className="nav-pill" href={item.href}>
-                  <span>{item.label.zh}</span>
-                  <span className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                    {item.label.en}
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <div className="flex flex-wrap items-center gap-3">
+          <nav
+            aria-label={localized(siteContent.navigationAriaLabel, locale)}
+            className="overflow-x-auto"
+          >
+            <ul className="flex min-w-max items-center gap-2">
+              {siteContent.navigation.map((item) => (
+                <li key={item.href}>
+                  <a className="nav-pill" href={item.href} lang={localeLang(locale)}>
+                    {localized(item.label, locale)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <div
+            aria-label={localized(siteContent.ui.languageToggleLabel, locale)}
+            className="lang-switcher"
+            role="group"
+          >
+            <button
+              type="button"
+              className="lang-button"
+              data-active={locale === "zh"}
+              aria-label={localized(siteContent.ui.switchToChinese, locale)}
+              aria-pressed={locale === "zh"}
+              onClick={() => startTransition(() => onLocaleChange("zh"))}
+            >
+              中
+            </button>
+            <button
+              type="button"
+              className="lang-button"
+              data-active={locale === "en"}
+              aria-label={localized(siteContent.ui.switchToEnglish, locale)}
+              aria-pressed={locale === "en"}
+              onClick={() => startTransition(() => onLocaleChange("en"))}
+            >
+              EN
+            </button>
+          </div>
+        </div>
       </div>
     </header>
   );
 }
 
-function HeroSection() {
+function HeroSection({ locale }: { locale: Locale }) {
   return (
     <section id="top" className="section-shell relative py-10 sm:py-16 lg:py-24">
       <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
@@ -234,36 +338,44 @@ function HeroSection() {
             className="absolute left-10 top-24 hidden h-12 w-12 rotate-12 rounded-[30%_70%_65%_35%/30%_30%_70%_70%] border-2 border-foreground bg-secondary lg:block"
           />
           <div className="relative">
-            <span className="eyebrow-pill mb-6 inline-flex">
-              {siteContent.hero.badge.zh}
-              <span className="mx-2 text-foreground/30">/</span>
-              <span lang="en">{siteContent.hero.badge.en}</span>
+            <span className="eyebrow-pill mb-6 inline-flex" lang={localeLang(locale)}>
+              {localized(siteContent.hero.badge, locale)}
             </span>
-            <BilingualBlock
+            <LocalizedTextBlock
               as="h1"
               copy={siteContent.hero.title}
-              className="max-w-3xl"
-              zhClassName="font-heading text-[clamp(2.9rem,6vw,5.8rem)] font-extrabold leading-[0.9] tracking-[-0.05em] [text-wrap:balance]"
-              enClassName="mt-4 max-w-2xl font-heading text-[clamp(1.2rem,2vw,1.8rem)] font-bold leading-[1.1] tracking-[-0.03em] text-accent [text-wrap:balance]"
+              locale={locale}
+              className={cn(
+                "max-w-3xl font-heading font-extrabold tracking-[-0.05em] [text-wrap:balance]",
+                locale === "zh"
+                  ? "text-[clamp(2.9rem,6vw,5.8rem)] leading-[0.9]"
+                  : "max-w-2xl text-[clamp(2.3rem,4.8vw,4.8rem)] leading-[0.95]",
+              )}
             />
-            <BilingualBlock
+            <LocalizedTextBlock
               as="p"
               copy={siteContent.hero.description}
-              className="mt-6 max-w-2xl"
-              zhClassName="text-lg font-medium leading-8 text-foreground"
-              enClassName="mt-3 text-base leading-7 text-muted-foreground"
+              locale={locale}
+              className={cn(
+                "mt-6 max-w-2xl text-foreground",
+                locale === "zh"
+                  ? "text-lg font-medium leading-8"
+                  : "text-base leading-7 text-muted-foreground",
+              )}
             />
             <div className="mt-8 flex flex-wrap gap-4">
               <ActionLink
                 href={siteContent.hero.primaryCta.href}
                 label={siteContent.hero.primaryCta.label}
                 ariaLabel={siteContent.hero.primaryCta.ariaLabel}
+                locale={locale}
                 variant="primary"
               />
               <ActionLink
                 href={siteContent.hero.secondaryCta.href}
                 label={siteContent.hero.secondaryCta.label}
                 ariaLabel={siteContent.hero.secondaryCta.ariaLabel}
+                locale={locale}
                 variant="secondary"
               />
             </div>
@@ -273,66 +385,80 @@ function HeroSection() {
                   key={item.label.en}
                   className="rounded-[20px] border-2 border-foreground bg-card px-4 py-4 shadow-[4px_4px_0_0_var(--muted)]"
                 >
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                    {item.label.zh}
+                  <p
+                    className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground"
+                    lang={localeLang(locale)}
+                  >
+                    {localized(item.label, locale)}
                   </p>
                   <p className="mt-2 font-heading text-3xl font-extrabold tracking-tight">
                     {item.value}
-                  </p>
-                  <p className="mt-1 text-sm text-muted-foreground" lang="en">
-                    {item.label.en}
                   </p>
                 </div>
               ))}
             </div>
           </div>
         </div>
-        <HeroFigure />
+        <HeroFigure locale={locale} />
       </div>
     </section>
   );
 }
 
-function HeroFigure() {
+function HeroFigure({ locale }: { locale: Locale }) {
   return (
     <div className="relative mx-auto w-full max-w-[32rem] lg:max-w-none">
-      <div aria-hidden="true" className="absolute -right-4 top-6 h-24 w-24 rotate-6 rounded-full border-2 border-foreground bg-secondary/80" />
-      <div aria-hidden="true" className="absolute -left-4 bottom-20 h-20 w-20 rounded-[12px_36px_36px_36px] border-2 border-foreground bg-quaternary/90" />
+      <div
+        aria-hidden="true"
+        className="absolute -right-4 top-6 h-24 w-24 rotate-6 rounded-full border-2 border-foreground bg-secondary/80"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute -left-4 bottom-20 h-20 w-20 rounded-[12px_36px_36px_36px] border-2 border-foreground bg-quaternary/90"
+      />
       <div className="hero-figure">
         <div className="dot-grid absolute inset-0 opacity-70" aria-hidden="true" />
         <div className="relative z-10 flex h-full flex-col justify-between gap-6">
           <div className="flex items-start justify-between gap-4">
             <div className="rounded-full border-2 border-foreground bg-card px-4 py-2 shadow-[4px_4px_0_0_var(--tertiary)]">
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground">
-                {siteContent.hero.figure.label.zh}
-              </p>
-              <p className="mt-1 font-heading text-xl font-extrabold tracking-tight" lang="en">
-                {siteContent.hero.figure.label.en}
+              <p
+                className="text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground"
+                lang={localeLang(locale)}
+              >
+                {localized(siteContent.hero.figure.label, locale)}
               </p>
             </div>
             <div className="rounded-[20px] border-2 border-foreground bg-tertiary px-4 py-3 shadow-[4px_4px_0_0_var(--foreground)]">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/70">
-                {siteContent.hero.figure.status.zh}
-              </p>
-              <p className="mt-1 text-sm font-semibold" lang="en">
-                {siteContent.hero.figure.status.en}
+              <p
+                className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/70"
+                lang={localeLang(locale)}
+              >
+                {localized(siteContent.hero.figure.status, locale)}
               </p>
             </div>
           </div>
           <div className="hero-blob relative overflow-hidden border-2 border-foreground bg-card">
-            <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(251,191,36,0.9),transparent_23%),radial-gradient(circle_at_80%_18%,rgba(244,114,182,0.9),transparent_20%),radial-gradient(circle_at_55%_72%,rgba(139,92,246,0.9),transparent_28%),linear-gradient(135deg,rgba(255,255,255,0.98),rgba(241,245,249,0.95))]" />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(251,191,36,0.9),transparent_23%),radial-gradient(circle_at_80%_18%,rgba(244,114,182,0.9),transparent_20%),radial-gradient(circle_at_55%_72%,rgba(139,92,246,0.9),transparent_28%),linear-gradient(135deg,rgba(255,255,255,0.98),rgba(241,245,249,0.95))]"
+            />
             <div className="relative flex h-full min-h-[18rem] flex-col justify-end px-6 py-7 sm:px-8">
               <div className="absolute left-6 top-6 h-16 w-16 rounded-full border-2 border-foreground bg-background shadow-[4px_4px_0_0_var(--foreground)]" />
               <div className="absolute right-8 top-10 h-12 w-24 rotate-6 rounded-full border-2 border-foreground bg-quaternary/90 shadow-[4px_4px_0_0_var(--foreground)]" />
               <div className="absolute left-[18%] top-[34%] h-5 w-28 -rotate-12 border-2 border-foreground bg-secondary" />
               <div className="absolute right-[16%] top-[46%] h-5 w-20 rotate-6 border-2 border-foreground bg-accent" />
               <div className="relative rounded-[28px] border-2 border-foreground bg-card px-5 py-4 shadow-[6px_6px_0_0_var(--foreground)]">
-                <p className="text-sm font-semibold leading-6 text-foreground">
-                  {siteContent.hero.figure.note.zh}
-                </p>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground" lang="en">
-                  {siteContent.hero.figure.note.en}
-                </p>
+                <LocalizedTextBlock
+                  as="p"
+                  copy={siteContent.hero.figure.note}
+                  locale={locale}
+                  className={cn(
+                    "text-foreground",
+                    locale === "zh"
+                      ? "text-sm font-semibold leading-6"
+                      : "text-sm leading-6 text-muted-foreground",
+                  )}
+                />
               </div>
             </div>
           </div>
@@ -347,9 +473,8 @@ function HeroFigure() {
                   index === 2 && "bg-secondary text-foreground",
                 )}
               >
-                <p className="text-sm font-bold leading-5">{tag.zh}</p>
-                <p className={cn("mt-1 text-xs uppercase tracking-[0.18em]", index === 0 ? "text-white/85" : "text-foreground/70")}>
-                  {tag.en}
+                <p className="text-sm font-bold leading-5" lang={localeLang(locale)}>
+                  {localized(tag, locale)}
                 </p>
               </div>
             ))}
@@ -364,6 +489,7 @@ function SectionHeading({
   icon,
   tone,
   heading,
+  locale,
 }: {
   icon: IconKey;
   tone: AccentTone;
@@ -372,6 +498,7 @@ function SectionHeading({
     title: LocalizedText;
     description: LocalizedText;
   };
+  locale: Locale;
 }) {
   const Icon = iconMap[icon];
   const toneStyle = toneStyles[tone];
@@ -382,25 +509,34 @@ function SectionHeading({
         <div className={cn("icon-medallion", toneStyle.icon)}>
           <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
         </div>
-        <BilingualBlock
+        <LocalizedTextBlock
           as="p"
           copy={heading.eyebrow}
-          zhClassName="text-xs font-bold uppercase tracking-[0.24em] text-muted-foreground"
-          enClassName="text-xs font-bold uppercase tracking-[0.24em] text-muted-foreground"
+          locale={locale}
+          className="text-xs font-bold uppercase tracking-[0.24em] text-muted-foreground"
         />
       </div>
-      <BilingualBlock
+      <LocalizedTextBlock
         as="h2"
         copy={heading.title}
-        zhClassName="font-heading text-[clamp(2rem,4vw,3.3rem)] font-extrabold tracking-[-0.05em] [text-wrap:balance]"
-        enClassName="mt-3 font-heading text-xl font-bold tracking-[-0.03em] text-accent"
+        locale={locale}
+        className={cn(
+          "font-heading font-extrabold tracking-[-0.05em] [text-wrap:balance]",
+          locale === "zh"
+            ? "text-[clamp(2rem,4vw,3.3rem)]"
+            : "text-[clamp(1.8rem,3.6vw,3rem)] leading-tight",
+        )}
       />
-      <BilingualBlock
+      <LocalizedTextBlock
         as="p"
         copy={heading.description}
-        className="mt-4 max-w-2xl"
-        zhClassName="text-base font-medium leading-7 text-foreground"
-        enClassName="mt-3 text-sm leading-6 text-muted-foreground"
+        locale={locale}
+        className={cn(
+          "mt-4 max-w-2xl",
+          locale === "zh"
+            ? "text-base font-medium leading-7 text-foreground"
+            : "text-sm leading-6 text-muted-foreground",
+        )}
       />
     </div>
   );
@@ -416,6 +552,7 @@ function StickerCard({
   action,
   href,
   ariaLabel,
+  locale,
 }: {
   tone: AccentTone;
   icon: IconKey;
@@ -426,6 +563,7 @@ function StickerCard({
   action: LocalizedText;
   href: string;
   ariaLabel: LocalizedText;
+  locale: Locale;
 }) {
   const Icon = iconMap[icon];
   const toneStyle = toneStyles[tone];
@@ -443,33 +581,44 @@ function StickerCard({
         <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
       </div>
       <div className="flex h-full flex-col gap-5 pt-6">
-        <div className={cn("inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]", toneStyle.chip)}>
-          <span>{eyebrow.zh}</span>
-          <span className="mx-2 text-foreground/30">/</span>
-          <span>{eyebrow.en}</span>
+        <div
+          className={cn(
+            "inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]",
+            toneStyle.chip,
+          )}
+          lang={localeLang(locale)}
+        >
+          {localized(eyebrow, locale)}
         </div>
-        <BilingualBlock
+        <LocalizedTextBlock
           as="h3"
           copy={title}
-          zhClassName="font-heading text-2xl font-extrabold tracking-[-0.04em]"
-          enClassName="mt-2 text-sm font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+          locale={locale}
+          className={cn(
+            "font-heading font-extrabold tracking-[-0.04em]",
+            locale === "zh" ? "text-2xl" : "text-[1.65rem] leading-tight",
+          )}
         />
-        <BilingualBlock
+        <LocalizedTextBlock
           as="p"
           copy={body}
-          zhClassName="text-base leading-7 text-foreground"
-          enClassName="mt-3 text-sm leading-6 text-muted-foreground"
+          locale={locale}
+          className={cn(
+            locale === "zh"
+              ? "text-base leading-7 text-foreground"
+              : "text-sm leading-6 text-muted-foreground",
+          )}
         />
         <div className="mt-auto rounded-[18px] border-2 border-dashed border-foreground/25 bg-muted/60 px-4 py-3">
-          <p className="text-sm font-semibold text-foreground">{meta.zh}</p>
-          <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground" lang="en">
-            {meta.en}
+          <p className="text-sm font-semibold text-foreground" lang={localeLang(locale)}>
+            {localized(meta, locale)}
           </p>
         </div>
         <ActionLink
           href={href}
           label={action}
           ariaLabel={ariaLabel}
+          locale={locale}
           variant="secondary"
           external
           fullWidth
@@ -481,9 +630,11 @@ function StickerCard({
 
 function ExperimentCard({
   item,
+  locale,
   mirrored,
 }: {
   item: (typeof siteContent.experiments.items)[number];
+  locale: Locale;
   mirrored?: boolean;
 }) {
   const Icon = iconMap[item.icon];
@@ -491,7 +642,10 @@ function ExperimentCard({
 
   return (
     <article
-      className={cn("sticker-card grid gap-6 overflow-hidden lg:grid-cols-[0.88fr_1.12fr]", mirrored && "lg:grid-cols-[1.12fr_0.88fr]")}
+      className={cn(
+        "sticker-card grid gap-6 overflow-hidden lg:grid-cols-[0.88fr_1.12fr]",
+        mirrored && "lg:grid-cols-[1.12fr_0.88fr]",
+      )}
       style={
         {
           "--card-shadow": toneStyle.shadow,
@@ -520,33 +674,42 @@ function ExperimentCard({
                   index === 1 && "bg-tertiary",
                   index === 2 && "bg-quaternary",
                 )}
+                lang={localeLang(locale)}
               >
-                <span>{highlight.zh}</span>
-                <span className="ml-2 text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  {highlight.en}
-                </span>
+                {localized(highlight, locale)}
               </div>
             ))}
           </div>
         </div>
       </div>
       <div className={cn("flex flex-col justify-between gap-5", mirrored && "lg:order-first")}>
-        <div className={cn("inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]", toneStyle.chip)}>
-          <span>{item.label.zh}</span>
-          <span className="mx-2 text-foreground/30">/</span>
-          <span>{item.label.en}</span>
+        <div
+          className={cn(
+            "inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]",
+            toneStyle.chip,
+          )}
+          lang={localeLang(locale)}
+        >
+          {localized(item.label, locale)}
         </div>
-        <BilingualBlock
+        <LocalizedTextBlock
           as="h3"
           copy={item.title}
-          zhClassName="font-heading text-3xl font-extrabold tracking-[-0.05em]"
-          enClassName="mt-3 font-heading text-lg font-bold tracking-[-0.03em] text-accent"
+          locale={locale}
+          className={cn(
+            "font-heading font-extrabold tracking-[-0.05em]",
+            locale === "zh" ? "text-3xl" : "text-[2rem] leading-tight",
+          )}
         />
-        <BilingualBlock
+        <LocalizedTextBlock
           as="p"
           copy={item.summary}
-          zhClassName="text-base leading-7 text-foreground"
-          enClassName="mt-3 text-sm leading-6 text-muted-foreground"
+          locale={locale}
+          className={cn(
+            locale === "zh"
+              ? "text-base leading-7 text-foreground"
+              : "text-sm leading-6 text-muted-foreground",
+          )}
         />
         <div className="grid gap-3 sm:grid-cols-2">
           {item.details.map((detail) => (
@@ -554,13 +717,18 @@ function ExperimentCard({
               key={detail.title.en}
               className="rounded-[18px] border-2 border-foreground bg-card px-4 py-4 shadow-[4px_4px_0_0_var(--muted)]"
             >
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
-                {detail.title.zh}
+              <p
+                className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground"
+                lang={localeLang(locale)}
+              >
+                {localized(detail.title, locale)}
               </p>
-              <p className="mt-2 text-sm font-semibold leading-6 text-foreground" lang="en">
-                {detail.title.en}
+              <p
+                className="mt-3 text-sm leading-6 text-muted-foreground"
+                lang={localeLang(locale)}
+              >
+                {localized(detail.body, locale)}
               </p>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">{detail.body.zh}</p>
             </div>
           ))}
         </div>
@@ -568,6 +736,7 @@ function ExperimentCard({
           href={item.href}
           label={siteContent.ui.visitExperiment}
           ariaLabel={item.ariaLabel}
+          locale={locale}
           variant="primary"
           external
         />
@@ -576,7 +745,13 @@ function ExperimentCard({
   );
 }
 
-function WritingCard({ item }: { item: (typeof siteContent.writing.items)[number] }) {
+function WritingCard({
+  item,
+  locale,
+}: {
+  item: (typeof siteContent.writing.items)[number];
+  locale: Locale;
+}) {
   const toneStyle = toneStyles[item.tone];
   const Icon = iconMap[item.icon];
 
@@ -589,34 +764,44 @@ function WritingCard({ item }: { item: (typeof siteContent.writing.items)[number
         } as CSSProperties
       }
     >
-      <div className={cn("mb-6 inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]", toneStyle.chip)}>
-        {item.category.zh}
-        <span className="mx-2 text-foreground/30">/</span>
-        {item.category.en}
+      <div
+        className={cn(
+          "mb-6 inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]",
+          toneStyle.chip,
+        )}
+        lang={localeLang(locale)}
+      >
+        {localized(item.category, locale)}
       </div>
       <div className="flex items-start gap-4">
         <div className={cn("icon-medallion shrink-0", toneStyle.icon)}>
           <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
         </div>
-        <BilingualBlock
+        <LocalizedTextBlock
           as="h3"
           copy={item.title}
-          zhClassName="font-heading text-2xl font-extrabold tracking-[-0.04em]"
-          enClassName="mt-2 text-sm font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+          locale={locale}
+          className={cn(
+            "font-heading font-extrabold tracking-[-0.04em]",
+            locale === "zh" ? "text-2xl" : "text-[1.6rem] leading-tight",
+          )}
         />
       </div>
-      <BilingualBlock
+      <LocalizedTextBlock
         as="p"
         copy={item.summary}
-        className="mt-5"
-        zhClassName="text-base leading-7 text-foreground"
-        enClassName="mt-3 text-sm leading-6 text-muted-foreground"
+        locale={locale}
+        className={cn(
+          "mt-5",
+          locale === "zh"
+            ? "text-base leading-7 text-foreground"
+            : "text-sm leading-6 text-muted-foreground",
+        )}
       />
       <div className="mt-6 flex items-center justify-between gap-3 rounded-[18px] border-2 border-dashed border-foreground/25 bg-muted/60 px-4 py-3">
         <div>
-          <p className="text-sm font-semibold text-foreground">{item.meta.zh}</p>
-          <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground" lang="en">
-            {item.meta.en}
+          <p className="text-sm font-semibold text-foreground" lang={localeLang(locale)}>
+            {localized(item.meta, locale)}
           </p>
         </div>
         {item.href ? (
@@ -624,14 +809,16 @@ function WritingCard({ item }: { item: (typeof siteContent.writing.items)[number
             href={item.href}
             label={siteContent.ui.readArticle}
             ariaLabel={item.ariaLabel}
+            locale={locale}
             variant="secondary"
             external
           />
         ) : (
-          <span className="inline-flex rounded-full border-2 border-foreground bg-card px-4 py-2 text-sm font-semibold text-muted-foreground">
-            {siteContent.ui.comingSoon.zh}
-            <span className="mx-2 text-foreground/25">/</span>
-            <span>{siteContent.ui.comingSoon.en}</span>
+          <span
+            className="inline-flex rounded-full border-2 border-foreground bg-card px-4 py-2 text-sm font-semibold text-muted-foreground"
+            lang={localeLang(locale)}
+          >
+            {localized(siteContent.ui.comingSoon, locale)}
           </span>
         )}
       </div>
@@ -639,7 +826,13 @@ function WritingCard({ item }: { item: (typeof siteContent.writing.items)[number
   );
 }
 
-function SocialCard({ item }: { item: (typeof siteContent.socialLinks.items)[number] }) {
+function SocialCard({
+  item,
+  locale,
+}: {
+  item: (typeof siteContent.socialLinks.items)[number];
+  locale: Locale;
+}) {
   const toneStyle = toneStyles[item.tone];
   const Icon = iconMap[item.icon];
 
@@ -656,31 +849,43 @@ function SocialCard({ item }: { item: (typeof siteContent.socialLinks.items)[num
         <div className={cn("icon-medallion", toneStyle.icon)}>
           <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
         </div>
-        <span className={cn("inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]", toneStyle.chip)}>
-          {item.kind.zh}
-          <span className="mx-2 text-foreground/30">/</span>
-          {item.kind.en}
+        <span
+          className={cn(
+            "inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]",
+            toneStyle.chip,
+          )}
+          lang={localeLang(locale)}
+        >
+          {localized(item.kind, locale)}
         </span>
       </div>
       <div>
-        <BilingualBlock
+        <LocalizedTextBlock
           as="h3"
           copy={item.title}
-          zhClassName="font-heading text-2xl font-extrabold tracking-[-0.04em]"
-          enClassName="mt-2 text-sm font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+          locale={locale}
+          className={cn(
+            "font-heading font-extrabold tracking-[-0.04em]",
+            locale === "zh" ? "text-2xl" : "text-[1.6rem] leading-tight",
+          )}
         />
-        <BilingualBlock
+        <LocalizedTextBlock
           as="p"
           copy={item.description}
-          className="mt-4"
-          zhClassName="text-base leading-7 text-foreground"
-          enClassName="mt-3 text-sm leading-6 text-muted-foreground"
+          locale={locale}
+          className={cn(
+            "mt-4",
+            locale === "zh"
+              ? "text-base leading-7 text-foreground"
+              : "text-sm leading-6 text-muted-foreground",
+          )}
         />
       </div>
       <ActionLink
         href={item.href}
         label={item.cta}
         ariaLabel={item.ariaLabel}
+        locale={locale}
         variant="primary"
         external
         fullWidth
@@ -689,30 +894,38 @@ function SocialCard({ item }: { item: (typeof siteContent.socialLinks.items)[num
   );
 }
 
-function FooterNote() {
+function FooterNote({ locale }: { locale: Locale }) {
   return (
     <footer className="section-shell pb-12 pt-4">
       <div className="rounded-[32px] border-2 border-foreground bg-card px-6 py-8 shadow-[8px_8px_0_0_var(--muted)] sm:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
-            <BilingualBlock
+            <LocalizedTextBlock
               as="h2"
               copy={siteContent.footerNote.heading}
-              zhClassName="font-heading text-3xl font-extrabold tracking-[-0.04em]"
-              enClassName="mt-2 text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+              locale={locale}
+              className={cn(
+                "font-heading font-extrabold tracking-[-0.04em]",
+                locale === "zh" ? "text-3xl" : "text-[2rem] leading-tight",
+              )}
             />
-            <BilingualBlock
+            <LocalizedTextBlock
               as="p"
               copy={siteContent.footerNote.body}
-              className="mt-4"
-              zhClassName="text-base leading-7 text-foreground"
-              enClassName="mt-3 text-sm leading-6 text-muted-foreground"
+              locale={locale}
+              className={cn(
+                "mt-4",
+                locale === "zh"
+                  ? "text-base leading-7 text-foreground"
+                  : "text-sm leading-6 text-muted-foreground",
+              )}
             />
           </div>
           <ActionLink
             href="#top"
             label={siteContent.footerNote.backToTop}
             ariaLabel={siteContent.footerNote.backToTop}
+            locale={locale}
             variant="secondary"
           />
         </div>
@@ -744,6 +957,7 @@ function ActionLink({
   href,
   label,
   ariaLabel,
+  locale,
   variant,
   external,
   fullWidth,
@@ -751,6 +965,7 @@ function ActionLink({
   href: string;
   label: LocalizedText;
   ariaLabel: LocalizedText;
+  locale: Locale;
   variant: "primary" | "secondary";
   external?: boolean;
   fullWidth?: boolean;
@@ -762,16 +977,12 @@ function ActionLink({
         variant === "primary" ? "candy-button" : "outline-button",
         fullWidth && "w-full justify-center",
       )}
-      aria-label={`${ariaLabel.zh} / ${ariaLabel.en}`}
+      aria-label={localized(ariaLabel, locale)}
+      lang={localeLang(locale)}
       rel={external ? "noreferrer" : undefined}
       target={external ? "_blank" : undefined}
     >
-      <span className="text-left">
-        <span className="block text-sm font-bold">{label.zh}</span>
-        <span className="block text-[0.68rem] uppercase tracking-[0.18em] opacity-80" lang="en">
-          {label.en}
-        </span>
-      </span>
+      <span className="text-sm font-bold">{localized(label, locale)}</span>
       <span className="button-arrow">
         {external ? (
           <ArrowUpRight aria-hidden="true" className="h-4 w-4" strokeWidth={2.5} />
@@ -783,29 +994,32 @@ function ActionLink({
   );
 }
 
-function BilingualBlock({
+function LocalizedTextBlock({
   as,
   copy,
+  locale,
   className,
-  zhClassName,
-  enClassName,
 }: {
   as?: ElementType;
   copy: LocalizedText;
+  locale: Locale;
   className?: string;
-  zhClassName?: string;
-  enClassName?: string;
 }) {
   const Tag = as ?? "div";
 
   return (
-    <Tag className={className}>
-      <span className={cn("block", zhClassName)}>{copy.zh}</span>
-      <span className={cn("block", enClassName)} lang="en">
-        {copy.en}
-      </span>
+    <Tag className={className} lang={localeLang(locale)}>
+      {localized(copy, locale)}
     </Tag>
   );
+}
+
+function localized(copy: LocalizedText, locale: Locale) {
+  return copy[locale];
+}
+
+function localeLang(locale: Locale) {
+  return locale === "zh" ? "zh-CN" : "en";
 }
 
 function cn(...values: Array<string | false | null | undefined>) {

@@ -3,6 +3,8 @@ export type LocalizedText = {
   en: string;
 };
 
+export type Locale = "zh" | "en";
+
 export type AccentTone = "accent" | "secondary" | "tertiary" | "quaternary";
 
 export type IconKey =
@@ -117,6 +119,10 @@ export type SiteContent = {
     }>;
   };
   ui: {
+    skipToContent: LocalizedText;
+    languageToggleLabel: LocalizedText;
+    switchToChinese: LocalizedText;
+    switchToEnglish: LocalizedText;
     visitProject: LocalizedText;
     visitExperiment: LocalizedText;
     readArticle: LocalizedText;
@@ -715,6 +721,22 @@ export const siteContent = {
     ],
   },
   ui: {
+    skipToContent: {
+      zh: "跳转到主要内容",
+      en: "Skip to content",
+    },
+    languageToggleLabel: {
+      zh: "切换网站语言",
+      en: "Switch site language",
+    },
+    switchToChinese: {
+      zh: "切换到中文",
+      en: "Switch to Chinese",
+    },
+    switchToEnglish: {
+      zh: "切换到英文",
+      en: "Switch to English",
+    },
     visitProject: {
       zh: "查看项目",
       en: "Visit project",
