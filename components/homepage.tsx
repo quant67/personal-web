@@ -1,13 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import {
   type CSSProperties,
   type ElementType,
+  type SVGProps,
   startTransition,
   useEffect,
   useSyncExternalStore,
 } from "react";
-import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -32,14 +33,38 @@ const DEFAULT_LOCALE: Locale = "zh";
 
 const localeListeners = new Set<() => void>();
 
-const iconMap: Record<IconKey, LucideIcon> = {
+function GitHubIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M12 .297C5.373.297 0 5.67 0 12.297c0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.547-1.385-1.334-1.754-1.334-1.754-1.09-.744.083-.729.083-.729 1.206.084 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.42-1.305.763-1.605-2.665-.3-5.467-1.334-5.467-5.93 0-1.31.468-2.38 1.236-3.22-.124-.303-.535-1.523.118-3.176 0 0 1.008-.323 3.3 1.23a11.49 11.49 0 0 1 3.006-.404c1.02.005 2.047.137 3.006.404 2.29-1.553 3.297-1.23 3.297-1.23.655 1.653.244 2.873.12 3.176.77.84 1.235 1.91 1.235 3.22 0 4.608-2.807 5.628-5.48 5.922.43.372.814 1.102.814 2.222 0 1.606-.014 2.902-.014 3.297 0 .322.216.696.825.578C20.565 22.092 24 17.594 24 12.297 24 5.67 18.627.297 12 .297Z" />
+    </svg>
+  );
+}
+
+function XIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M18.244 2.25H21.55l-7.227 8.26L22.827 21.75H16.17l-5.214-6.817-5.963 6.817H1.68l7.73-8.836L1.255 2.25H7.91l4.713 6.231zm-1.162 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
+const iconMap: Record<IconKey, ElementType<SVGProps<SVGSVGElement>>> = {
   sparkles: Sparkles,
   rocket: Rocket,
   code: Code2,
   book: BookOpen,
-  github: Code2,
+  github: GitHubIcon,
+  x: XIcon,
   mail: Mail,
   globe: Globe2,
+};
+
+const iconTextStyles: Record<AccentTone, string> = {
+  accent: "text-accent",
+  secondary: "text-secondary",
+  tertiary: "text-tertiary",
+  quaternary: "text-quaternary",
 };
 
 const toneStyles: Record<
@@ -83,6 +108,7 @@ export function Homepage() {
     getLocaleSnapshot,
     getServerLocaleSnapshot,
   );
+  const hasSingleProject = siteContent.openSourceProjects.items.length === 1;
 
   useEffect(() => {
     document.documentElement.lang = locale === "zh" ? "zh-CN" : "en";
@@ -125,9 +151,14 @@ export function Homepage() {
             heading={siteContent.openSourceProjects.heading}
             locale={locale}
           />
-          <div className="relative mt-10">
-            <ProjectConnector />
-            <div className="grid gap-6 lg:grid-cols-3">
+          <div
+            className={cn(
+              "relative mt-6",
+              hasSingleProject && "max-w-4xl",
+            )}
+          >
+            {!hasSingleProject ? <ProjectConnector /> : null}
+            <div className={cn("grid gap-6", hasSingleProject ? "grid-cols-1" : "lg:grid-cols-3")}>
               {siteContent.openSourceProjects.items.map((item) => (
                 <StickerCard
                   key={item.title.en}
@@ -154,7 +185,7 @@ export function Homepage() {
             heading={siteContent.experiments.heading}
             locale={locale}
           />
-          <div className="mt-10 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
             {siteContent.experiments.items.map((item, index) => (
               <ExperimentCard
                 key={item.title.en}
@@ -173,7 +204,7 @@ export function Homepage() {
             heading={siteContent.writing.heading}
             locale={locale}
           />
-          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {siteContent.writing.items.map((item) => (
               <WritingCard key={item.title.en} item={item} locale={locale} />
             ))}
@@ -181,24 +212,16 @@ export function Homepage() {
         </section>
 
         <section id="connect" className="section-shell py-16 sm:py-20">
-          <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-            <div className="relative">
-              <SectionHeading
-                icon="globe"
-                tone="quaternary"
-                heading={siteContent.socialLinks.heading}
-                locale={locale}
-              />
-              <span
-                aria-hidden="true"
-                className="absolute -left-3 top-10 hidden h-28 w-28 rounded-full border-2 border-foreground bg-tertiary/50 lg:block"
-              />
-            </div>
-            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {siteContent.socialLinks.items.map((item) => (
-                <SocialCard key={item.title.en} item={item} locale={locale} />
-              ))}
-            </div>
+          <SectionHeading
+            icon="globe"
+            tone="quaternary"
+            heading={siteContent.socialLinks.heading}
+            locale={locale}
+          />
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {siteContent.socialLinks.items.map((item) => (
+              <SocialCard key={item.title.en} item={item} locale={locale} />
+            ))}
           </div>
         </section>
       </main>
@@ -329,14 +352,6 @@ function HeroSection({ locale }: { locale: Locale }) {
     <section id="top" className="section-shell relative py-10 sm:py-16 lg:py-24">
       <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div className="relative">
-          <div
-            aria-hidden="true"
-            className="absolute -left-12 top-4 hidden h-44 w-44 rounded-full border-2 border-foreground bg-tertiary/70 lg:block"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute left-10 top-24 hidden h-12 w-12 rotate-12 rounded-[30%_70%_65%_35%/30%_30%_70%_70%] border-2 border-foreground bg-secondary lg:block"
-          />
           <div className="relative">
             <span className="eyebrow-pill mb-6 inline-flex" lang={localeLang(locale)}>
               {localized(siteContent.hero.badge, locale)}
@@ -348,8 +363,8 @@ function HeroSection({ locale }: { locale: Locale }) {
               className={cn(
                 "max-w-3xl font-heading font-extrabold tracking-[-0.05em] [text-wrap:balance]",
                 locale === "zh"
-                  ? "text-[clamp(2.9rem,6vw,5.8rem)] leading-[0.9]"
-                  : "max-w-2xl text-[clamp(2.3rem,4.8vw,4.8rem)] leading-[0.95]",
+                  ? "text-[clamp(2.3rem,4.8vw,4.7rem)] leading-[0.94]"
+                  : "max-w-2xl text-[clamp(1.95rem,4vw,4rem)] leading-[0.98]",
               )}
             />
             <LocalizedTextBlock
@@ -406,79 +421,45 @@ function HeroSection({ locale }: { locale: Locale }) {
 }
 
 function HeroFigure({ locale }: { locale: Locale }) {
+  const heroSocialLinks = siteContent.socialLinks.items.slice(0, 3);
+
   return (
-    <div className="relative mx-auto w-full max-w-[32rem] lg:max-w-none">
-      <div
-        aria-hidden="true"
-        className="absolute -right-4 top-6 h-24 w-24 rotate-6 rounded-full border-2 border-foreground bg-secondary/80"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute -left-4 bottom-20 h-20 w-20 rounded-[12px_36px_36px_36px] border-2 border-foreground bg-quaternary/90"
-      />
-      <div className="hero-figure">
-        <div className="dot-grid absolute inset-0 opacity-70" aria-hidden="true" />
-        <div className="relative z-10 flex h-full flex-col justify-between gap-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="rounded-full border-2 border-foreground bg-card px-4 py-2 shadow-[4px_4px_0_0_var(--tertiary)]">
-              <p
-                className="text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground"
-                lang={localeLang(locale)}
-              >
-                {localized(siteContent.hero.figure.label, locale)}
-              </p>
-            </div>
-            <div className="rounded-[20px] border-2 border-foreground bg-tertiary px-4 py-3 shadow-[4px_4px_0_0_var(--foreground)]">
-              <p
-                className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/70"
-                lang={localeLang(locale)}
-              >
-                {localized(siteContent.hero.figure.status, locale)}
-              </p>
-            </div>
-          </div>
-          <div className="hero-blob relative overflow-hidden border-2 border-foreground bg-card">
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(251,191,36,0.9),transparent_23%),radial-gradient(circle_at_80%_18%,rgba(244,114,182,0.9),transparent_20%),radial-gradient(circle_at_55%_72%,rgba(139,92,246,0.9),transparent_28%),linear-gradient(135deg,rgba(255,255,255,0.98),rgba(241,245,249,0.95))]"
-            />
-            <div className="relative flex h-full min-h-[18rem] flex-col justify-end px-6 py-7 sm:px-8">
-              <div className="absolute left-6 top-6 h-16 w-16 rounded-full border-2 border-foreground bg-background shadow-[4px_4px_0_0_var(--foreground)]" />
-              <div className="absolute right-8 top-10 h-12 w-24 rotate-6 rounded-full border-2 border-foreground bg-quaternary/90 shadow-[4px_4px_0_0_var(--foreground)]" />
-              <div className="absolute left-[18%] top-[34%] h-5 w-28 -rotate-12 border-2 border-foreground bg-secondary" />
-              <div className="absolute right-[16%] top-[46%] h-5 w-20 rotate-6 border-2 border-foreground bg-accent" />
-              <div className="relative rounded-[28px] border-2 border-foreground bg-card px-5 py-4 shadow-[6px_6px_0_0_var(--foreground)]">
-                <LocalizedTextBlock
-                  as="p"
-                  copy={siteContent.hero.figure.note}
-                  locale={locale}
-                  className={cn(
-                    "text-foreground",
-                    locale === "zh"
-                      ? "text-sm font-semibold leading-6"
-                      : "text-sm leading-6 text-muted-foreground",
-                  )}
-                />
+    <div className="mx-auto flex w-full max-w-[32rem] items-center justify-center lg:max-w-none">
+      <div className="relative flex flex-col items-center">
+        <div className="relative h-[18rem] w-[18rem] overflow-hidden rounded-full border-[3px] border-foreground bg-card sm:h-[24rem] sm:w-[24rem]">
+          <Image
+            src="/avatar.jpeg"
+            alt={locale === "zh" ? "创作者头像" : "Creator portrait"}
+            fill
+            priority
+            sizes="(min-width: 1024px) 24rem, (min-width: 640px) 18rem, 16rem"
+            className="object-cover"
+          />
+        </div>
+        <div className="relative mt-[-0.25rem] flex w-[17rem] items-start justify-center gap-5 sm:w-[21rem] sm:gap-7">
+          {heroSocialLinks.map((item, index) => {
+            const Icon = iconMap[item.icon];
+            const offsetClass =
+              index === 0
+                ? "translate-y-2 sm:translate-y-3"
+                : index === 1
+                  ? "translate-y-5 sm:translate-y-6"
+                  : "translate-y-2 sm:translate-y-3";
+
+            return (
+              <div key={item.title.en} className={offsetClass}>
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={localized(item.ariaLabel, locale)}
+                  className="inline-flex h-11 w-11 items-center justify-center text-foreground transition-transform duration-300 ease-out hover:-translate-y-px"
+                >
+                  <Icon aria-hidden="true" className="h-[22px] w-[22px]" strokeWidth={2} />
+                </a>
               </div>
-            </div>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {siteContent.hero.figure.tags.map((tag, index) => (
-              <div
-                key={tag.en}
-                className={cn(
-                  "rounded-[18px] border-2 border-foreground px-4 py-3 shadow-[4px_4px_0_0_var(--foreground)]",
-                  index === 0 && "bg-accent text-white",
-                  index === 1 && "bg-card text-foreground",
-                  index === 2 && "bg-secondary text-foreground",
-                )}
-              >
-                <p className="text-sm font-bold leading-5" lang={localeLang(locale)}>
-                  {localized(tag, locale)}
-                </p>
-              </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -504,40 +485,18 @@ function SectionHeading({
   const toneStyle = toneStyles[tone];
 
   return (
-    <div className="max-w-3xl">
-      <div className="mb-5 flex items-center gap-4">
+    <div>
+      <div className="flex items-center gap-4">
         <div className={cn("icon-medallion", toneStyle.icon)}>
           <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
         </div>
         <LocalizedTextBlock
-          as="p"
+          as="h2"
           copy={heading.eyebrow}
           locale={locale}
           className="text-xs font-bold uppercase tracking-[0.24em] text-muted-foreground"
         />
       </div>
-      <LocalizedTextBlock
-        as="h2"
-        copy={heading.title}
-        locale={locale}
-        className={cn(
-          "font-heading font-extrabold tracking-[-0.05em] [text-wrap:balance]",
-          locale === "zh"
-            ? "text-[clamp(2rem,4vw,3.3rem)]"
-            : "text-[clamp(1.8rem,3.6vw,3rem)] leading-tight",
-        )}
-      />
-      <LocalizedTextBlock
-        as="p"
-        copy={heading.description}
-        locale={locale}
-        className={cn(
-          "mt-4 max-w-2xl",
-          locale === "zh"
-            ? "text-base font-medium leading-7 text-foreground"
-            : "text-sm leading-6 text-muted-foreground",
-        )}
-      />
     </div>
   );
 }
@@ -798,29 +757,31 @@ function WritingCard({
             : "text-sm leading-6 text-muted-foreground",
         )}
       />
-      <div className="mt-6 flex items-center justify-between gap-3 rounded-[18px] border-2 border-dashed border-foreground/25 bg-muted/60 px-4 py-3">
-        <div>
-          <p className="text-sm font-semibold text-foreground" lang={localeLang(locale)}>
-            {localized(item.meta, locale)}
-          </p>
+      <div className="mt-auto pt-6">
+        <div className="flex min-h-24 items-center justify-between gap-3 rounded-[18px] border-2 border-dashed border-foreground/25 bg-muted/60 px-4 py-3">
+          <div>
+            <p className="text-sm font-semibold text-foreground" lang={localeLang(locale)}>
+              {localized(item.meta, locale)}
+            </p>
+          </div>
+          {item.href ? (
+            <ActionLink
+              href={item.href}
+              label={siteContent.ui.readArticle}
+              ariaLabel={item.ariaLabel}
+              locale={locale}
+              variant="secondary"
+              external
+            />
+          ) : (
+            <span
+              className="inline-flex rounded-full border-2 border-foreground bg-card px-4 py-2 text-sm font-semibold text-muted-foreground"
+              lang={localeLang(locale)}
+            >
+              {localized(siteContent.ui.comingSoon, locale)}
+            </span>
+          )}
         </div>
-        {item.href ? (
-          <ActionLink
-            href={item.href}
-            label={siteContent.ui.readArticle}
-            ariaLabel={item.ariaLabel}
-            locale={locale}
-            variant="secondary"
-            external
-          />
-        ) : (
-          <span
-            className="inline-flex rounded-full border-2 border-foreground bg-card px-4 py-2 text-sm font-semibold text-muted-foreground"
-            lang={localeLang(locale)}
-          >
-            {localized(siteContent.ui.comingSoon, locale)}
-          </span>
-        )}
       </div>
     </article>
   );
@@ -833,64 +794,43 @@ function SocialCard({
   item: (typeof siteContent.socialLinks.items)[number];
   locale: Locale;
 }) {
-  const toneStyle = toneStyles[item.tone];
   const Icon = iconMap[item.icon];
 
   return (
-    <article
-      className="sticker-card flex h-full flex-col justify-between gap-5"
-      style={
-        {
-          "--card-shadow": toneStyle.shadow,
-        } as CSSProperties
-      }
+    <a
+      href={item.href}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={localized(item.ariaLabel, locale)}
+      className="group sticker-card flex h-full min-h-[11rem] flex-col justify-between gap-6 p-5 sm:p-6"
     >
       <div className="flex items-center justify-between gap-4">
-        <div className={cn("icon-medallion", toneStyle.icon)}>
-          <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
-        </div>
-        <span
-          className={cn(
-            "inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]",
-            toneStyle.chip,
-          )}
-          lang={localeLang(locale)}
-        >
-          {localized(item.kind, locale)}
-        </span>
+        <Icon
+          aria-hidden="true"
+          className={cn("h-7 w-7 shrink-0", iconTextStyles[item.tone])}
+          strokeWidth={2.2}
+        />
+        <ArrowUpRight
+          aria-hidden="true"
+          className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+          strokeWidth={2.5}
+        />
       </div>
-      <div>
+      <div className="space-y-3">
         <LocalizedTextBlock
           as="h3"
           copy={item.title}
           locale={locale}
           className={cn(
             "font-heading font-extrabold tracking-[-0.04em]",
-            locale === "zh" ? "text-2xl" : "text-[1.6rem] leading-tight",
+            locale === "zh" ? "text-[1.75rem]" : "text-[1.5rem] leading-tight",
           )}
         />
-        <LocalizedTextBlock
-          as="p"
-          copy={item.description}
-          locale={locale}
-          className={cn(
-            "mt-4",
-            locale === "zh"
-              ? "text-base leading-7 text-foreground"
-              : "text-sm leading-6 text-muted-foreground",
-          )}
-        />
+        <p className="break-all text-sm font-semibold tracking-tight text-muted-foreground sm:text-base">
+          {item.value}
+        </p>
       </div>
-      <ActionLink
-        href={item.href}
-        label={item.cta}
-        ariaLabel={item.ariaLabel}
-        locale={locale}
-        variant="primary"
-        external
-        fullWidth
-      />
-    </article>
+    </a>
   );
 }
 

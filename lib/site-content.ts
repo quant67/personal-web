@@ -13,6 +13,7 @@ export type IconKey =
   | "code"
   | "book"
   | "github"
+  | "x"
   | "mail"
   | "globe";
 
@@ -110,10 +111,8 @@ export type SiteContent = {
     items: Array<{
       icon: IconKey;
       tone: AccentTone;
-      kind: LocalizedText;
       title: LocalizedText;
-      description: LocalizedText;
-      cta: LocalizedText;
+      value: string;
       href: string;
       ariaLabel: LocalizedText;
     }>;
@@ -137,16 +136,16 @@ export type SiteContent = {
 
 export const siteContent = {
   seo: {
-    title: "Playful Geometric Personal Homepage",
+    title: "Sixseven Labs",
     description: {
-      zh: "一个用 playful geometric 设计语言搭建的双语个人品牌主页，展示项目、文章和公开构建轨迹。",
-      en: "A bilingual personal homepage built with a playful geometric system to showcase projects, writing, and public building.",
+      zh: "个人品牌主页，展示项目、文章和公开构建轨迹。",
+      en: "A personal homepage to showcase projects, writing, and public building.",
     },
   },
   brand: {
     name: {
-      zh: "实验中的个人主页",
-      en: "Playful Web",
+      zh: "六七的个人主页",
+      en: "六七的个人主页",
     },
   },
   navigationAriaLabel: {
@@ -185,16 +184,16 @@ export const siteContent = {
   ],
   hero: {
     badge: {
-      zh: "独立构建者 / 创作者",
-      en: "Indie builder / public thinker",
+      zh: "六七",
+      en: "Sixseven",
     },
     title: {
-      zh: "把想法做成有形的产品、工具和长期作品",
-      en: "I turn curious ideas into products, tools, and long-form internet artifacts.",
+      zh: "用AI构建有用的工具和系统",
+      en: "I build useful tools and systems with AI.",
     },
     description: {
-      zh: "我偏爱把复杂问题拆成清晰体验，把过程公开，把作品做得既能用又有记忆点。这里是一个内容型首页，集中展示我的开源项目、在做实验、写作主题和公开构建入口。",
-      en: "I like turning messy ideas into clear experiences, building in public, and shipping things that feel useful and memorable. This page is a content-rich front door to my open-source work, current experiments, writing themes, and public touchpoints.",
+      zh: "记录项目、实验和写作。",
+      en: "Projects, experiments, and writing, in one place.",
     },
     primaryCta: {
       href: "#projects",
@@ -327,78 +326,28 @@ export const siteContent = {
     },
     items: [
       {
-        icon: "code",
+        icon: "rocket",
         tone: "accent",
         title: {
-          zh: "Prompt Atlas",
-          en: "Prompt Atlas",
+          zh: "Sol Tracker",
+          en: "Sol Tracker",
         },
         summary: {
-          zh: "一个帮助创作者整理、测试与迭代提示词的可视化工作台，把零散灵感整理成可复用的系统。",
-          en: "A visual workspace for organizing, testing, and iterating on prompts so scattered ideas become reusable systems.",
+          zh: "一个面向 Solana 的链上钱包与价格信号监控系统，实时跟踪目标钱包的 Swap 交易，在 Dashboard 中集中查看记录、策略与告警历史，并通过 Telegram 推送链上动作和价格行为提醒。",
+          en: "A Solana wallet and price-signal tracking system that watches target wallets in real time, surfaces activity, strategies, and alert history in a dashboard, and pushes on-chain actions plus price-behavior signals to Telegram.",
         },
         metric: {
-          zh: "模块化 Prompt 库",
-          en: "Modular prompt library",
+          zh: "链上钱包 + 策略提醒",
+          en: "Wallet tracking + signal alerts",
         },
         stack: {
-          zh: "React / TypeScript / AI UX",
-          en: "React / TypeScript / AI UX",
+          zh: "Next.js / Supabase / Helius / Telegram Bot",
+          en: "Next.js / Supabase / Helius / Telegram Bot",
         },
-        href: "https://github.com/your-handle/prompt-atlas",
+        href: "https://github.com/quant67/sol-tracker",
         ariaLabel: {
-          zh: "打开 Prompt Atlas 项目仓库",
-          en: "Open the Prompt Atlas repository",
-        },
-      },
-      {
-        icon: "rocket",
-        tone: "secondary",
-        title: {
-          zh: "Signal Garden",
-          en: "Signal Garden",
-        },
-        summary: {
-          zh: "一个个人信号面板，用来追踪创作节奏、内容反馈和微型实验，把“感觉”变成可以回看的记录。",
-          en: "A personal signal dashboard for tracking creative rhythm, audience feedback, and tiny experiments over time.",
-        },
-        metric: {
-          zh: "构建中仪表盘",
-          en: "Live dashboard",
-        },
-        stack: {
-          zh: "Next.js / Data Viz / Notes",
-          en: "Next.js / Data viz / Notes",
-        },
-        href: "https://github.com/your-handle/signal-garden",
-        ariaLabel: {
-          zh: "打开 Signal Garden 项目仓库",
-          en: "Open the Signal Garden repository",
-        },
-      },
-      {
-        icon: "sparkles",
-        tone: "tertiary",
-        title: {
-          zh: "Build Notes",
-          en: "Build Notes",
-        },
-        summary: {
-          zh: "面向公开构建的写作与归档系统，用短篇笔记记录每一次迭代、推翻与复盘。",
-          en: "A writing and archiving system for public building that captures each iteration, reversal, and retrospective in short notes.",
-        },
-        metric: {
-          zh: "公开构建归档",
-          en: "Public build archive",
-        },
-        stack: {
-          zh: "Content / MDX / Workflow",
-          en: "Content / MDX / Workflow",
-        },
-        href: "https://github.com/your-handle/build-notes",
-        ariaLabel: {
-          zh: "打开 Build Notes 项目仓库",
-          en: "Open the Build Notes repository",
+          zh: "打开 Sol Tracker 项目仓库",
+          en: "Open the Sol Tracker repository",
         },
       },
     ],
@@ -630,89 +579,56 @@ export const siteContent = {
   socialLinks: {
     heading: {
       eyebrow: {
-        zh: "公开在场",
-        en: "Build in public",
+        zh: "联系方式",
+        en: "Connect",
       },
       title: {
-        zh: "如果你想继续观察、合作或直接发消息",
-        en: "The fastest ways to follow along, collaborate, or simply send a note.",
+        zh: "想联系我，这三个入口就够了",
+        en: "Three direct ways to follow or reach me.",
       },
       description: {
-        zh: "我倾向于在公开环境里持续输出，在需要深聊的时候再进入一对一。所以这些入口既是社交链接，也是长期关系的起点。",
-        en: "I prefer showing up in public first and going one-to-one when the conversation gets specific. These links are both social surfaces and relationship entry points.",
+        zh: "看代码、看近况，或者直接发邮件。",
+        en: "Code, updates, or a direct note.",
       },
     },
     items: [
       {
         icon: "github",
         tone: "accent",
-        kind: {
-          zh: "代码与原型",
-          en: "Code",
-        },
         title: {
           zh: "GitHub",
           en: "GitHub",
         },
-        description: {
-          zh: "看我在做什么、怎么做，以及哪些项目还在演化中。",
-          en: "Follow what I am building, how I structure it, and which experiments are still evolving.",
-        },
-        cta: {
-          zh: "打开 GitHub",
-          en: "Open profile",
-        },
-        href: "https://github.com/your-handle",
+        value: "quant67",
+        href: "https://github.com/quant67",
         ariaLabel: {
           zh: "打开 GitHub 主页",
           en: "Open the GitHub profile",
         },
       },
       {
-        icon: "globe",
+        icon: "x",
         tone: "secondary",
-        kind: {
-          zh: "公开更新",
-          en: "Social",
-        },
         title: {
-          zh: "X / Twitter",
-          en: "X / Twitter",
+          zh: "X",
+          en: "X",
         },
-        description: {
-          zh: "短更新、实验切片、想法测试，通常会比正式文章更快出现。",
-          en: "Short updates, experiment fragments, and half-formed ideas usually show up here before they become essays.",
-        },
-        cta: {
-          zh: "去看近况",
-          en: "See updates",
-        },
-        href: "https://x.com/your-handle",
+        value: "@0xSixseven",
+        href: "https://x.com/0xSixseven",
         ariaLabel: {
-          zh: "打开 X 或 Twitter 主页",
-          en: "Open the X or Twitter profile",
+          zh: "打开 X 主页",
+          en: "Open the X profile",
         },
       },
       {
         icon: "mail",
         tone: "quaternary",
-        kind: {
-          zh: "直接联系",
-          en: "Email",
-        },
         title: {
           zh: "Email",
           en: "Email",
         },
-        description: {
-          zh: "如果你已经知道想聊什么，邮件仍然是最清晰、最稳妥的入口。",
-          en: "If you already know what you want to talk about, email is still the clearest and most durable channel.",
-        },
-        cta: {
-          zh: "发一封邮件",
-          en: "Send an email",
-        },
-        href: "mailto:hello@example.com",
+        value: "sherlockliu6@gmail.com",
+        href: "mailto:sherlockliu6@gmail.com",
         ariaLabel: {
           zh: "发送邮件联系我",
           en: "Send an email to get in touch",
