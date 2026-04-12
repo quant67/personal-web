@@ -62,9 +62,9 @@ const iconMap: Record<IconKey, ElementType<SVGProps<SVGSVGElement>>> = {
 
 const iconTextStyles: Record<AccentTone, string> = {
   accent: "text-accent",
-  secondary: "text-secondary",
-  tertiary: "text-tertiary",
-  quaternary: "text-quaternary",
+  secondary: "text-[color:var(--secondary-ink)]",
+  tertiary: "text-[color:var(--tertiary-ink)]",
+  quaternary: "text-[color:var(--quaternary-ink)]",
 };
 
 const toneStyles: Record<
@@ -72,32 +72,37 @@ const toneStyles: Record<
   {
     chip: string;
     icon: string;
-    ring: string;
+    panel: string;
+    sectionLabel: string;
     shadow: string;
   }
 > = {
   accent: {
-    chip: "bg-accent/12 text-accent",
+    chip: "bg-[color:var(--accent-soft)] text-accent",
     icon: "bg-accent text-white",
-    ring: "outline-accent/40",
+    panel: "bg-[color:var(--accent-soft)]",
+    sectionLabel: "text-accent",
     shadow: "var(--accent)",
   },
   secondary: {
-    chip: "bg-secondary/12 text-foreground",
+    chip: "bg-[color:var(--secondary-soft)] text-[color:var(--secondary-ink)]",
     icon: "bg-secondary text-foreground",
-    ring: "outline-secondary/50",
+    panel: "bg-[color:var(--secondary-soft)]",
+    sectionLabel: "text-[color:var(--secondary-ink)]",
     shadow: "var(--secondary)",
   },
   tertiary: {
-    chip: "bg-tertiary/18 text-foreground",
+    chip: "bg-[color:var(--tertiary-soft)] text-[color:var(--tertiary-ink)]",
     icon: "bg-tertiary text-foreground",
-    ring: "outline-tertiary/50",
+    panel: "bg-[color:var(--tertiary-soft)]",
+    sectionLabel: "text-[color:var(--tertiary-ink)]",
     shadow: "var(--tertiary)",
   },
   quaternary: {
-    chip: "bg-quaternary/16 text-foreground",
-    icon: "bg-quaternary text-foreground",
-    ring: "outline-quaternary/50",
+    chip: "bg-[color:var(--quaternary-soft)] text-[color:var(--quaternary-ink)]",
+    icon: "bg-quaternary text-white",
+    panel: "bg-[color:var(--quaternary-soft)]",
+    sectionLabel: "text-[color:var(--quaternary-ink)]",
     shadow: "var(--quaternary)",
   },
 };
@@ -109,6 +114,8 @@ export function Homepage() {
     getServerLocaleSnapshot,
   );
   const hasSingleProject = siteContent.openSourceProjects.items.length === 1;
+  const writingTone: AccentTone = "tertiary";
+  const connectTone: AccentTone = "quaternary";
 
   useEffect(() => {
     document.documentElement.lang = locale === "zh" ? "zh-CN" : "en";
@@ -200,13 +207,18 @@ export function Homepage() {
         <section id="writing" className="section-shell py-16 sm:py-20">
           <SectionHeading
             icon="book"
-            tone="tertiary"
+            tone={writingTone}
             heading={siteContent.writing.heading}
             locale={locale}
           />
           <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {siteContent.writing.items.map((item) => (
-              <WritingCard key={item.title.en} item={item} locale={locale} />
+              <WritingCard
+                key={item.title.en}
+                item={item}
+                locale={locale}
+                tone={writingTone}
+              />
             ))}
           </div>
         </section>
@@ -214,13 +226,18 @@ export function Homepage() {
         <section id="connect" className="section-shell py-16 sm:py-20">
           <SectionHeading
             icon="globe"
-            tone="quaternary"
+            tone={connectTone}
             heading={siteContent.socialLinks.heading}
             locale={locale}
           />
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {siteContent.socialLinks.items.map((item) => (
-              <SocialCard key={item.title.en} item={item} locale={locale} />
+              <SocialCard
+                key={item.title.en}
+                item={item}
+                locale={locale}
+                tone={connectTone}
+              />
             ))}
           </div>
         </section>
@@ -285,9 +302,14 @@ function SiteNav({
     <header className="section-shell sticky top-0 z-50 pt-4">
       <div className="nav-sticker flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="icon-medallion bg-accent text-white">
-            <Sparkles aria-hidden="true" className="h-4 w-4" strokeWidth={2.5} />
-          </div>
+          <Image
+            src="/icon.svg"
+            alt=""
+            aria-hidden="true"
+            width={48}
+            height={48}
+            className="h-12 w-12 shrink-0"
+          />
           <div>
             <p
               className="font-heading text-base font-extrabold tracking-tight"
@@ -494,7 +516,10 @@ function SectionHeading({
           as="h2"
           copy={heading.eyebrow}
           locale={locale}
-          className="text-xs font-bold uppercase tracking-[0.24em] text-muted-foreground"
+          className={cn(
+            "text-xs font-bold uppercase tracking-[0.24em]",
+            toneStyle.sectionLabel,
+          )}
         />
       </div>
     </div>
@@ -529,7 +554,7 @@ function StickerCard({
 
   return (
     <article
-      className={cn("sticker-card", toneStyle.ring)}
+      className="sticker-card"
       style={
         {
           "--card-shadow": toneStyle.shadow,
@@ -614,8 +639,7 @@ function ExperimentCard({
       <div
         className={cn(
           "relative min-h-[16rem] overflow-hidden rounded-[24px] border-2 border-foreground p-5",
-          item.tone === "secondary" && "bg-secondary/70",
-          item.tone === "accent" && "bg-accent/12",
+          toneStyle.panel,
         )}
       >
         <div aria-hidden="true" className="stripe-fill absolute inset-0 opacity-40" />
@@ -629,9 +653,9 @@ function ExperimentCard({
                 key={highlight.en}
                 className={cn(
                   "max-w-[14rem] rounded-full border-2 border-foreground px-4 py-2 text-sm font-semibold shadow-[4px_4px_0_0_var(--foreground)]",
-                  index === 0 && "bg-card",
-                  index === 1 && "bg-tertiary",
-                  index === 2 && "bg-quaternary",
+                  index === 0 && "bg-card text-foreground",
+                  index === 1 && "bg-[color:var(--tertiary-soft)] text-[color:var(--tertiary-ink)]",
+                  index === 2 && "bg-[color:var(--quaternary-soft)] text-[color:var(--quaternary-ink)]",
                 )}
                 lang={localeLang(locale)}
               >
@@ -707,11 +731,13 @@ function ExperimentCard({
 function WritingCard({
   item,
   locale,
+  tone,
 }: {
   item: (typeof siteContent.writing.items)[number];
   locale: Locale;
+  tone: AccentTone;
 }) {
-  const toneStyle = toneStyles[item.tone];
+  const toneStyle = toneStyles[tone];
   const Icon = iconMap[item.icon];
 
   return (
@@ -790,11 +816,14 @@ function WritingCard({
 function SocialCard({
   item,
   locale,
+  tone,
 }: {
   item: (typeof siteContent.socialLinks.items)[number];
   locale: Locale;
+  tone: AccentTone;
 }) {
   const Icon = iconMap[item.icon];
+  const toneStyle = toneStyles[tone];
 
   return (
     <a
@@ -803,11 +832,16 @@ function SocialCard({
       rel="noreferrer"
       aria-label={localized(item.ariaLabel, locale)}
       className="group sticker-card flex h-full min-h-[11rem] flex-col justify-between gap-6 p-5 sm:p-6"
+      style={
+        {
+          "--card-shadow": toneStyle.shadow,
+        } as CSSProperties
+      }
     >
       <div className="flex items-center justify-between gap-4">
         <Icon
           aria-hidden="true"
-          className={cn("h-7 w-7 shrink-0", iconTextStyles[item.tone])}
+          className={cn("h-7 w-7 shrink-0", iconTextStyles[tone])}
           strokeWidth={2.2}
         />
         <ArrowUpRight
