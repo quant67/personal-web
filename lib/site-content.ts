@@ -56,7 +56,6 @@ export type SiteContent = {
       label: LocalizedText;
       status: LocalizedText;
       note: LocalizedText;
-      tags: LocalizedText[];
     };
   };
   keywords: {
@@ -89,7 +88,7 @@ export type SiteContent = {
         title: LocalizedText;
         body: LocalizedText;
       }>;
-      href: string;
+      href?: string;
       ariaLabel: LocalizedText;
     }>;
   };
@@ -126,6 +125,8 @@ export type SiteContent = {
     visitExperiment: LocalizedText;
     readArticle: LocalizedText;
     comingSoon: LocalizedText;
+    requestPreview: LocalizedText;
+    requestPreviewAria: LocalizedText;
   };
   footerNote: {
     heading: LocalizedText;
@@ -188,11 +189,11 @@ export const siteContent = {
       en: "Sixseven",
     },
     title: {
-      zh: "用AI构建有用的工具和系统",
+      zh: "用AI发掘更多的可能性",
       en: "I build useful tools and systems with AI.",
     },
     description: {
-      zh: "记录项目、实验和写作。",
+      zh: "项目、实验，还有一些边做边想的事。",
       en: "Projects, experiments, and writing, in one place.",
     },
     primaryCta: {
@@ -250,23 +251,9 @@ export const siteContent = {
         en: "Shipping weekly",
       },
       note: {
-        zh: "内容可以有温度，系统可以很清晰，界面也不必长得像每一个模板网站。",
+        zh: "我偏爱结构清楚、能长期维护的东西；精益求精，合作共赢。",
         en: "Content can feel warm, systems can stay sharp, and interfaces do not need to look like every other template on the internet.",
       },
-      tags: [
-        {
-          zh: "AI 工具",
-          en: "AI tooling",
-        },
-        {
-          zh: "个人系统",
-          en: "Personal systems",
-        },
-        {
-          zh: "公开构建",
-          en: "Build in public",
-        },
-      ],
     },
   },
   keywords: {
@@ -312,15 +299,15 @@ export const siteContent = {
   openSourceProjects: {
     heading: {
       eyebrow: {
-        zh: "精选公开作品",
+        zh: "已经做成的",
         en: "Selected open source",
       },
       title: {
-        zh: "我愿意长期维护、反复打磨的项目",
+        zh: "想知道我平时怎么做事，先看这些项目",
         en: "Projects I keep refining because they solve problems I still care about.",
       },
       description: {
-        zh: "这一组更像是“可验证的工作方式”：不是只展示截图，而是把问题拆法、执行习惯和产品判断都体现在产物里。",
+        zh: "它们不是截图集。想看我怎么拆问题、怎么取舍、怎么继续维护，从这里会更快。",
         en: "This set acts as a proof of working style. Instead of just polished screenshots, each project shows how I frame problems, ship features, and refine product decisions over time.",
       },
     },
@@ -355,15 +342,15 @@ export const siteContent = {
   experiments: {
     heading: {
       eyebrow: {
-        zh: "现在在做什么",
+        zh: "正在试的",
         en: "Selected experiments",
       },
       title: {
-        zh: "一些还在长大的产品方向",
+        zh: "这些方向还没长成，但我还想继续折腾",
         en: "Ideas in motion that are still changing shape as I learn from them.",
       },
       description: {
-        zh: "这些不是“完成品橱窗”，而是我当前愿意继续下注的问题空间。它们展示的是方向感、判断力，以及我对长期产品的耐心。",
+        zh: "它们还不成熟，也不打算伪装成熟。现在能看到的，是问题、假设和取舍。",
         en: "These are not finished-product trophies. They are current bets that reveal where my attention is going and what kinds of long-term product questions I want to keep exploring.",
       },
     },
@@ -419,10 +406,9 @@ export const siteContent = {
             },
           },
         ],
-        href: "https://github.com/your-handle/orbit-studio",
         ariaLabel: {
-          zh: "打开 Orbit Studio 实验项目",
-          en: "Open the Orbit Studio experiment",
+          zh: "跳转到联系区域请求 Orbit Studio 内测",
+          en: "Jump to the connect section to request Orbit Studio preview access",
         },
       },
       {
@@ -476,10 +462,9 @@ export const siteContent = {
             },
           },
         ],
-        href: "https://github.com/your-handle/second-brain-playground",
         ariaLabel: {
-          zh: "打开 Second Brain Playground 实验项目",
-          en: "Open the Second Brain Playground experiment",
+          zh: "跳转到联系区域请求 Second Brain Playground 内测",
+          en: "Jump to the connect section to request Second Brain Playground preview access",
         },
       },
     ],
@@ -487,15 +472,15 @@ export const siteContent = {
   writing: {
     heading: {
       eyebrow: {
-        zh: "写作与观点",
+        zh: "写下来",
         en: "Writing",
       },
       title: {
-        zh: "把构建过程写下来，也把判断写清楚",
+        zh: "很多想法，不写下来我自己也说不清",
         en: "Writing that captures both the making and the thinking behind it.",
       },
       description: {
-        zh: "我更偏爱“可复用的思路”而不是纯情绪输出，所以文章会围绕系统、产品、内容与个人增长的交叉地带展开。",
+        zh: "我写东西，通常不是为了表达情绪，而是想把一个问题想清楚，再留下一份能复用的版本。",
         en: "I prefer publishing reusable thinking rather than pure reaction, so the writing lives at the intersection of systems, products, content, and personal growth.",
       },
     },
@@ -508,7 +493,7 @@ export const siteContent = {
           en: "Systems",
         },
         title: {
-          zh: "为什么个人品牌需要一个“作品操作系统”",
+          zh: "个人品牌这件事，最后拼的不是页面",
           en: "Why a personal brand needs an operating system, not just a landing page",
         },
         summary: {
@@ -516,13 +501,12 @@ export const siteContent = {
           en: "For creators who want to connect content, products, and opportunities by moving from one-off outputs to a compounding body of work.",
         },
         meta: {
-          zh: "长文 · 设计中的内容系统",
-          en: "Longform · content architecture",
+          zh: "长文 · 即将公开",
+          en: "Longform · coming soon",
         },
-        href: "https://example.com/operating-system",
         ariaLabel: {
-          zh: "阅读关于作品操作系统的文章",
-          en: "Read the article about a personal brand operating system",
+          zh: "查看关于作品操作系统文章的状态",
+          en: "View the status of the operating system article",
         },
       },
       {
@@ -533,7 +517,7 @@ export const siteContent = {
           en: "AI workflow",
         },
         title: {
-          zh: "把 AI 工具做成真正能长期使用的产品，需要补上的 5 个环节",
+          zh: "把模型接进来，只是 AI 产品最简单的一步",
           en: "Five missing layers between a clever AI demo and a product people keep using",
         },
         summary: {
@@ -557,7 +541,7 @@ export const siteContent = {
           en: "Public building",
         },
         title: {
-          zh: "为什么我开始把“做了什么”改成“学到了什么”",
+          zh: "后来我发现，公开构建不只是汇报进度",
           en: "Why I stopped publishing only what I made and started sharing what I learned",
         },
         summary: {
@@ -565,13 +549,12 @@ export const siteContent = {
           en: "A reflection on shifting public building from result-first updates to learning-first notes that make the process more useful for others.",
         },
         meta: {
-          zh: "短文 · 可立即阅读",
-          en: "Short essay · live now",
+          zh: "短文 · 即将公开",
+          en: "Short essay · coming soon",
         },
-        href: "https://example.com/build-in-public",
         ariaLabel: {
-          zh: "阅读关于公开构建的文章",
-          en: "Read the article about building in public",
+          zh: "查看关于公开构建文章的状态",
+          en: "View the status of the public building article",
         },
       },
     ],
@@ -579,15 +562,15 @@ export const siteContent = {
   socialLinks: {
     heading: {
       eyebrow: {
-        zh: "联系方式",
+        zh: "找到我",
         en: "Connect",
       },
       title: {
-        zh: "想联系我，这三个入口就够了",
+        zh: "如果你也在想这些问题，欢迎来聊",
         en: "Three direct ways to follow or reach me.",
       },
       description: {
-        zh: "看代码、看近况，或者直接发邮件。",
+        zh: "代码、近况、邮件。",
         en: "Code, updates, or a direct note.",
       },
     },
@@ -666,17 +649,25 @@ export const siteContent = {
       en: "Read article",
     },
     comingSoon: {
-      zh: "即将发布",
+      zh: "即将公开",
       en: "Coming soon",
+    },
+    requestPreview: {
+      zh: "请求内测",
+      en: "Request preview",
+    },
+    requestPreviewAria: {
+      zh: "跳转到联系区域请求内测",
+      en: "Jump to the connect section to request preview access",
     },
   },
   footerNote: {
     heading: {
-      zh: "这不是一张完成态名片，而是一张持续更新的工作地图",
+      zh: "这页还没定稿，我也还在继续折腾",
       en: "This is not a frozen calling card. It is a living map of what I am building and learning.",
     },
     body: {
-      zh: "这里的内容会继续变化，项目也会继续被替换、迭代、放弃或重做。如果某个方向和你有关，欢迎直接联系；如果只是路过，也希望你能带走一两个有用的想法。",
+      zh: "这里的东西会继续改。有些会留下，有些会被推翻，有些只是阶段性答案。如果某个方向刚好和你有关，直接联系就行。",
       en: "Everything here is subject to revision. Some projects will deepen, some will disappear, and some will be rebuilt from scratch. If one of these directions overlaps with what you are building, I would love to hear from you.",
     },
     backToTop: {

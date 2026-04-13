@@ -7,6 +7,7 @@ import {
   type SVGProps,
   startTransition,
   useEffect,
+  useState,
   useSyncExternalStore,
 } from "react";
 import {
@@ -129,7 +130,7 @@ export function Homepage() {
         {localized(siteContent.ui.skipToContent, locale)}
       </a>
       <SiteNav locale={locale} onLocaleChange={setStoredLocale} />
-      <main id="main-content" className="pb-10">
+      <main id="main-content" className="section-anchor pb-12 sm:pb-14">
         <HeroSection locale={locale} />
         <section aria-labelledby="keywords-heading" className="section-shell py-8 sm:py-10">
           <h2 id="keywords-heading" className="sr-only">
@@ -140,18 +141,19 @@ export function Homepage() {
               {marqueeItems.map((item, index) => (
                 <span
                   key={`${item.en}-${index}`}
-                  className="inline-flex items-center gap-3 whitespace-nowrap rounded-full border-2 border-foreground bg-card px-4 py-2 text-sm font-semibold text-foreground"
+                  className="marquee-chip"
                   lang={localeLang(locale)}
                 >
-                  <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-secondary" />
+                  <span aria-hidden="true" className="marquee-dot" />
                   <span>{localized(item, locale)}</span>
                 </span>
               ))}
             </div>
           </div>
         </section>
+        <HeroProof locale={locale} />
 
-        <section id="projects" className="section-shell py-16 sm:py-20">
+        <section id="projects" className="section-anchor section-shell py-16 sm:py-20">
           <SectionHeading
             icon="code"
             tone="accent"
@@ -185,7 +187,7 @@ export function Homepage() {
           </div>
         </section>
 
-        <section id="experiments" className="section-shell py-16 sm:py-20">
+        <section id="experiments" className="section-anchor section-shell py-16 sm:py-20">
           <SectionHeading
             icon="sparkles"
             tone="secondary"
@@ -204,14 +206,14 @@ export function Homepage() {
           </div>
         </section>
 
-        <section id="writing" className="section-shell py-16 sm:py-20">
+        <section id="writing" className="section-anchor section-shell py-16 sm:py-20">
           <SectionHeading
             icon="book"
             tone={writingTone}
             heading={siteContent.writing.heading}
             locale={locale}
           />
-          <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="editorial-list mt-8 md:mt-10">
             {siteContent.writing.items.map((item) => (
               <WritingCard
                 key={item.title.en}
@@ -223,14 +225,14 @@ export function Homepage() {
           </div>
         </section>
 
-        <section id="connect" className="section-shell py-16 sm:py-20">
+        <section id="connect" className="section-anchor section-shell py-16 sm:py-20">
           <SectionHeading
             icon="globe"
             tone={connectTone}
             heading={siteContent.socialLinks.heading}
             locale={locale}
           />
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="contact-strip mt-8 md:mt-10">
             {siteContent.socialLinks.items.map((item) => (
               <SocialCard
                 key={item.title.en}
@@ -298,36 +300,63 @@ function SiteNav({
   locale: Locale;
   onLocaleChange: (locale: Locale) => void;
 }) {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    let frameId = 0;
+
+    const syncScrollState = () => {
+      frameId = 0;
+      setIsScrolled(window.scrollY > 12);
+    };
+
+    const handleScroll = () => {
+      if (frameId !== 0) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(syncScrollState);
+    };
+
+    syncScrollState();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+
+      if (frameId !== 0) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, []);
+
   return (
-    <header className="section-shell sticky top-0 z-50 pt-4">
-      <div className="nav-sticker flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+    <header className="section-shell sticky top-0 z-50 pt-3 sm:pt-4">
+      <div className="nav-sticker" data-scrolled={isScrolled}>
+        <div className="nav-brand">
           <Image
             src="/icon.svg"
             alt=""
             aria-hidden="true"
-            width={48}
-            height={48}
-            className="h-12 w-12 shrink-0"
+            width={44}
+            height={44}
+            className="h-11 w-11 shrink-0"
           />
-          <div>
-            <p
-              className="font-heading text-base font-extrabold tracking-tight"
-              lang={localeLang(locale)}
-            >
+          <div className="nav-brand-copy">
+            <p className="nav-title" lang={localeLang(locale)}>
               {localized(siteContent.brand.name, locale)}
             </p>
-            <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
+            <p className="nav-domain">
               sixsevenlabs.xyz
             </p>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="nav-cluster">
           <nav
             aria-label={localized(siteContent.navigationAriaLabel, locale)}
-            className="overflow-x-auto"
+            className="nav-scroll"
           >
-            <ul className="flex min-w-max items-center gap-2">
+            <ul className="nav-list">
               {siteContent.navigation.map((item) => (
                 <li key={item.href}>
                   <a className="nav-pill" href={item.href} lang={localeLang(locale)}>
@@ -371,8 +400,8 @@ function SiteNav({
 
 function HeroSection({ locale }: { locale: Locale }) {
   return (
-    <section id="top" className="section-shell relative py-10 sm:py-16 lg:py-24">
-      <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+    <section id="top" className="section-anchor section-shell relative py-10 sm:py-16 lg:py-24">
+      <div className="grid gap-10 sm:gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div className="relative">
           <div className="relative">
             <span className="eyebrow-pill mb-6 inline-flex" lang={localeLang(locale)}>
@@ -416,24 +445,6 @@ function HeroSection({ locale }: { locale: Locale }) {
                 variant="secondary"
               />
             </div>
-            <div className="mt-10 grid gap-4 sm:grid-cols-3">
-              {siteContent.hero.highlights.map((item) => (
-                <div
-                  key={item.label.en}
-                  className="rounded-[20px] border-2 border-foreground bg-card px-4 py-4 shadow-[4px_4px_0_0_var(--muted)]"
-                >
-                  <p
-                    className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground"
-                    lang={localeLang(locale)}
-                  >
-                    {localized(item.label, locale)}
-                  </p>
-                  <p className="mt-2 font-heading text-3xl font-extrabold tracking-tight">
-                    {item.value}
-                  </p>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
         <HeroFigure locale={locale} />
@@ -458,24 +469,18 @@ function HeroFigure({ locale }: { locale: Locale }) {
             className="object-cover"
           />
         </div>
-        <div className="relative mt-[-0.25rem] flex w-[17rem] items-start justify-center gap-5 sm:w-[21rem] sm:gap-7">
-          {heroSocialLinks.map((item, index) => {
+        <div className="mt-5 flex items-center justify-center gap-4 sm:gap-5">
+          {heroSocialLinks.map((item) => {
             const Icon = iconMap[item.icon];
-            const offsetClass =
-              index === 0
-                ? "translate-y-2 sm:translate-y-3"
-                : index === 1
-                  ? "translate-y-5 sm:translate-y-6"
-                  : "translate-y-2 sm:translate-y-3";
 
             return (
-              <div key={item.title.en} className={offsetClass}>
+              <div key={item.title.en}>
                 <a
                   href={item.href}
                   target="_blank"
                   rel="noreferrer"
                   aria-label={localized(item.ariaLabel, locale)}
-                  className="inline-flex h-11 w-11 items-center justify-center text-foreground transition-transform duration-300 ease-out hover:-translate-y-px"
+                  className="hero-social-link text-foreground"
                 >
                   <Icon aria-hidden="true" className="h-[22px] w-[22px]" strokeWidth={2} />
                 </a>
@@ -485,6 +490,56 @@ function HeroFigure({ locale }: { locale: Locale }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function HeroProof({ locale }: { locale: Locale }) {
+  const figure = siteContent.hero.figure;
+
+  return (
+    <section className="section-shell pb-4 pt-2 sm:pb-6 sm:pt-3">
+      <div className="proof-shell">
+        <div className="proof-stats">
+          {siteContent.hero.highlights.map((item) => (
+            <div key={item.label.en} className="proof-stat">
+              <p
+                className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-muted-foreground"
+                lang={localeLang(locale)}
+              >
+                {localized(item.label, locale)}
+              </p>
+              <p className="mt-2 font-heading text-[1.75rem] font-extrabold tracking-tight text-foreground">
+                {item.value}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div className="proof-note">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p
+              className="text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground"
+              lang={localeLang(locale)}
+            >
+              {localized(figure.label, locale)}
+            </p>
+            <span className="proof-status" lang={localeLang(locale)}>
+              {localized(figure.status, locale)}
+            </span>
+          </div>
+          <LocalizedTextBlock
+            as="p"
+            copy={figure.note}
+            locale={locale}
+            className={cn(
+              "mt-3 max-w-2xl",
+              locale === "zh"
+                ? "text-sm leading-6 text-foreground"
+                : "text-sm leading-6 text-muted-foreground",
+            )}
+          />
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -507,18 +562,38 @@ function SectionHeading({
   const toneStyle = toneStyles[tone];
 
   return (
-    <div>
-      <div className="flex items-center gap-4">
+    <div className="section-heading">
+      <div className="flex items-center gap-4 lg:pt-1">
         <div className={cn("icon-medallion", toneStyle.icon)}>
           <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
         </div>
         <LocalizedTextBlock
-          as="h2"
+          as="p"
           copy={heading.eyebrow}
           locale={locale}
           className={cn(
             "text-xs font-bold uppercase tracking-[0.24em]",
             toneStyle.sectionLabel,
+          )}
+        />
+      </div>
+      <div className="section-heading-copy">
+        <LocalizedTextBlock
+          as="h2"
+          copy={heading.title}
+          locale={locale}
+          className={cn(
+            "section-title",
+            locale === "zh" ? "text-[2rem] leading-[1.02] sm:text-[2.35rem]" : "text-[1.85rem] leading-tight sm:text-[2.25rem]",
+          )}
+        />
+        <LocalizedTextBlock
+          as="p"
+          copy={heading.description}
+          locale={locale}
+          className={cn(
+            "section-summary",
+            locale === "zh" ? "text-base leading-7" : "text-sm leading-6 sm:text-base sm:leading-7",
           )}
         />
       </div>
@@ -623,6 +698,7 @@ function ExperimentCard({
 }) {
   const Icon = iconMap[item.icon];
   const toneStyle = toneStyles[item.tone];
+  const experimentHref = getSafeContentHref("href" in item ? item.href : undefined);
 
   return (
     <article
@@ -715,14 +791,24 @@ function ExperimentCard({
             </div>
           ))}
         </div>
-        <ActionLink
-          href={item.href}
-          label={siteContent.ui.visitExperiment}
-          ariaLabel={item.ariaLabel}
-          locale={locale}
-          variant="primary"
-          external
-        />
+        {experimentHref ? (
+          <ActionLink
+            href={experimentHref}
+            label={siteContent.ui.visitExperiment}
+            ariaLabel={item.ariaLabel}
+            locale={locale}
+            variant="primary"
+            external
+          />
+        ) : (
+          <ActionLink
+            href="#connect"
+            label={siteContent.ui.requestPreview}
+            ariaLabel={item.ariaLabel}
+            locale={locale}
+            variant="primary"
+          />
+        )}
       </div>
     </article>
   );
@@ -738,37 +824,35 @@ function WritingCard({
   tone: AccentTone;
 }) {
   const toneStyle = toneStyles[tone];
-  const Icon = iconMap[item.icon];
+  const articleHref = getSafeContentHref("href" in item ? item.href : undefined);
 
   return (
-    <article
-      className="sticker-card flex h-full flex-col"
-      style={
-        {
-          "--card-shadow": toneStyle.shadow,
-        } as CSSProperties
-      }
-    >
-      <div
-        className={cn(
-          "mb-6 inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]",
-          toneStyle.chip,
-        )}
-        lang={localeLang(locale)}
-      >
-        {localized(item.category, locale)}
+    <article className="editorial-entry">
+      <div className="editorial-meta">
+        <span
+          className={cn(
+            "inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]",
+            toneStyle.chip,
+          )}
+          lang={localeLang(locale)}
+        >
+          {localized(item.category, locale)}
+        </span>
+        <p
+          className="text-[0.72rem] font-bold uppercase tracking-[0.2em] text-muted-foreground"
+          lang={localeLang(locale)}
+        >
+          {localized(item.meta, locale)}
+        </p>
       </div>
-      <div className="flex items-start gap-4">
-        <div className={cn("icon-medallion shrink-0", toneStyle.icon)}>
-          <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
-        </div>
+      <div className="editorial-copy">
         <LocalizedTextBlock
           as="h3"
           copy={item.title}
           locale={locale}
           className={cn(
-            "font-heading font-extrabold tracking-[-0.04em]",
-            locale === "zh" ? "text-2xl" : "text-[1.6rem] leading-tight",
+            "font-heading font-extrabold tracking-[-0.04em] text-foreground",
+            locale === "zh" ? "text-[1.85rem] leading-[1.08]" : "text-[1.65rem] leading-tight",
           )}
         />
       </div>
@@ -777,37 +861,33 @@ function WritingCard({
         copy={item.summary}
         locale={locale}
         className={cn(
-          "mt-5",
+          "editorial-summary",
           locale === "zh"
             ? "text-base leading-7 text-foreground"
             : "text-sm leading-6 text-muted-foreground",
         )}
       />
-      <div className="mt-auto pt-6">
-        <div className="flex min-h-24 items-center justify-between gap-3 rounded-[18px] border-2 border-dashed border-foreground/25 bg-muted/60 px-4 py-3">
-          <div>
-            <p className="text-sm font-semibold text-foreground" lang={localeLang(locale)}>
-              {localized(item.meta, locale)}
-            </p>
-          </div>
-          {item.href ? (
-            <ActionLink
-              href={item.href}
-              label={siteContent.ui.readArticle}
-              ariaLabel={item.ariaLabel}
-              locale={locale}
-              variant="secondary"
-              external
-            />
-          ) : (
-            <span
-              className="inline-flex rounded-full border-2 border-foreground bg-card px-4 py-2 text-sm font-semibold text-muted-foreground"
-              lang={localeLang(locale)}
-            >
-              {localized(siteContent.ui.comingSoon, locale)}
-            </span>
-          )}
-        </div>
+      <div className="editorial-action">
+        {articleHref ? (
+          <a
+            href={articleHref}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={localized(item.ariaLabel, locale)}
+            className={cn("editorial-link", toneStyle.sectionLabel)}
+            lang={localeLang(locale)}
+          >
+            <span>{localized(siteContent.ui.readArticle, locale)}</span>
+            <ArrowUpRight aria-hidden="true" className="h-4 w-4" strokeWidth={2.5} />
+          </a>
+        ) : (
+          <span
+            className={cn("editorial-status", toneStyle.sectionLabel)}
+            lang={localeLang(locale)}
+          >
+            {localized(siteContent.ui.comingSoon, locale)}
+          </span>
+        )}
       </div>
     </article>
   );
@@ -831,38 +911,28 @@ function SocialCard({
       target="_blank"
       rel="noreferrer"
       aria-label={localized(item.ariaLabel, locale)}
-      className="group sticker-card flex h-full min-h-[11rem] flex-col justify-between gap-6 p-5 sm:p-6"
-      style={
-        {
-          "--card-shadow": toneStyle.shadow,
-        } as CSSProperties
-      }
+      className="group contact-item"
     >
-      <div className="flex items-center justify-between gap-4">
-        <Icon
-          aria-hidden="true"
-          className={cn("h-7 w-7 shrink-0", iconTextStyles[tone])}
-          strokeWidth={2.2}
-        />
-        <ArrowUpRight
-          aria-hidden="true"
-          className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-          strokeWidth={2.5}
-        />
+      <div className={cn("contact-icon", toneStyle.icon)}>
+        <Icon aria-hidden="true" className="h-4 w-4 shrink-0" strokeWidth={2.3} />
       </div>
-      <div className="space-y-3">
+      <div className="min-w-0 flex-1">
         <LocalizedTextBlock
-          as="h3"
+          as="p"
           copy={item.title}
           locale={locale}
-          className={cn(
-            "font-heading font-extrabold tracking-[-0.04em]",
-            locale === "zh" ? "text-[1.75rem]" : "text-[1.5rem] leading-tight",
-          )}
+          className="text-[0.72rem] font-bold uppercase tracking-[0.2em] text-muted-foreground"
         />
-        <p className="break-all text-sm font-semibold tracking-tight text-muted-foreground sm:text-base">
+        <p className="mt-2 break-words text-base font-semibold tracking-tight text-foreground sm:text-[1.05rem]">
           {item.value}
         </p>
+      </div>
+      <div className="contact-arrow-wrap">
+        <ArrowUpRight
+          aria-hidden="true"
+          className={cn("contact-arrow", iconTextStyles[tone])}
+          strokeWidth={2.5}
+        />
       </div>
     </a>
   );
@@ -944,10 +1014,17 @@ function ActionLink({
   external?: boolean;
   fullWidth?: boolean;
 }) {
+  const actionableHref = external ? getSafeContentHref(href) : href;
+
+  if (!actionableHref) {
+    return null;
+  }
+
   return (
     <a
-      href={href}
+      href={actionableHref}
       className={cn(
+        "group",
         variant === "primary" ? "candy-button" : "outline-button",
         fullWidth && "w-full justify-center",
       )}
@@ -959,9 +1036,17 @@ function ActionLink({
       <span className="text-sm font-bold">{localized(label, locale)}</span>
       <span className="button-arrow">
         {external ? (
-          <ArrowUpRight aria-hidden="true" className="h-4 w-4" strokeWidth={2.5} />
+          <ArrowUpRight
+            aria-hidden="true"
+            className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            strokeWidth={2.5}
+          />
         ) : (
-          <ArrowRight aria-hidden="true" className="h-4 w-4" strokeWidth={2.5} />
+          <ArrowRight
+            aria-hidden="true"
+            className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-x-0.5"
+            strokeWidth={2.5}
+          />
         )}
       </span>
     </a>
@@ -994,6 +1079,16 @@ function localized(copy: LocalizedText, locale: Locale) {
 
 function localeLang(locale: Locale) {
   return locale === "zh" ? "zh-CN" : "en";
+}
+
+function getSafeContentHref(href?: unknown) {
+  if (typeof href !== "string" || href.length === 0) {
+    return undefined;
+  }
+
+  const placeholderPatterns = [/example\.com/i, /your-handle/i];
+
+  return placeholderPatterns.some((pattern) => pattern.test(href)) ? undefined : href;
 }
 
 function cn(...values: Array<string | false | null | undefined>) {

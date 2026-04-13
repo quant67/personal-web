@@ -122,20 +122,113 @@ select {
         @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
     }
 
+    .section-anchor {
+        scroll-margin-top: 10rem;
+    }
+
+    .section-heading {
+        @apply grid gap-4 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-start lg:gap-6;
+    }
+
+    .section-heading-copy {
+        @apply max-w-3xl;
+    }
+
+    .section-title {
+        @apply mt-3 font-heading font-extrabold tracking-[-0.05em] text-foreground;
+    }
+
+    .section-summary {
+        @apply mt-3 max-w-2xl text-muted-foreground;
+    }
+
+    .proof-shell {
+        @apply grid gap-4 rounded-[28px] border-2 border-foreground px-4 py-4 sm:px-5 sm:py-5 lg:grid-cols-[0.88fr_1.12fr] lg:items-center;
+        background: color-mix(in oklch, var(--card) 94%, var(--background));
+        box-shadow: 4px 4px 0 0 color-mix(in oklch, var(--muted) 78%, var(--background));
+    }
+
+    .proof-stats {
+        @apply grid grid-cols-3 gap-3;
+    }
+
+    .proof-stat {
+        @apply rounded-[18px] px-3 py-3;
+        border: 1.5px solid color-mix(in oklch, var(--foreground) 20%, transparent);
+        background: color-mix(in oklch, var(--background) 82%, var(--card));
+    }
+
+    .proof-note {
+        @apply border-t pt-4 lg:border-t-0 lg:border-l lg:pl-5 lg:pt-0;
+        border-color: color-mix(in oklch, var(--foreground) 18%, transparent);
+    }
+
+    .proof-status {
+        @apply inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em];
+        border: 1.5px solid color-mix(in oklch, var(--accent) 28%, var(--foreground));
+        background: color-mix(in oklch, var(--accent) 10%, var(--card));
+        color: var(--accent);
+    }
+
     .nav-sticker {
-        @apply rounded-full border-2 border-foreground bg-card px-4 py-3 shadow-[4px_4px_0_0_var(--foreground)] sm:px-5;
+        @apply flex flex-wrap items-start justify-between gap-3 rounded-[32px] border-2 border-foreground px-4 py-3 transition-all duration-300 ease-out sm:items-center sm:gap-4 sm:rounded-full sm:px-5;
+        background: color-mix(in oklch, var(--card) 88%, var(--background));
+        box-shadow: 4px 4px 0 0 var(--foreground);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+    }
+
+    .nav-sticker[data-scrolled="true"] {
+        background: color-mix(in oklch, var(--card) 80%, var(--background));
+        box-shadow: 3px 3px 0 0 var(--foreground);
+        transform: translateY(1px);
+    }
+
+    .nav-brand {
+        @apply flex min-w-0 items-center gap-3;
+    }
+
+    .nav-brand-copy {
+        @apply min-w-0;
+    }
+
+    .nav-title {
+        @apply truncate font-heading text-[0.95rem] font-extrabold tracking-tight text-foreground sm:text-base;
+    }
+
+    .nav-domain {
+        @apply mt-1 truncate text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground;
+    }
+
+    .nav-cluster {
+        @apply flex w-full min-w-0 items-center justify-between gap-3 sm:w-auto sm:justify-end;
+    }
+
+    .nav-scroll {
+        @apply -mb-1 min-w-0 flex-1 overflow-x-auto pb-1 sm:mb-0 sm:flex-none sm:overflow-visible sm:pb-0;
+        scrollbar-width: none;
+    }
+
+    .nav-scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-list {
+        @apply flex min-w-max items-center gap-2 pr-1;
     }
 
     .nav-pill {
-        @apply inline-flex min-h-11 items-center justify-center rounded-full border-2 border-transparent px-4 py-2 text-sm font-bold text-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground hover:bg-card hover:shadow-[3px_3px_0_0_var(--foreground)];
+        @apply inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full border-2 border-transparent px-4 py-2 text-sm font-bold text-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground hover:bg-[color:var(--accent-soft)] hover:text-accent active:translate-y-0.5 focus-visible:border-foreground focus-visible:bg-card;
     }
 
     .lang-switcher {
-        @apply inline-flex items-center gap-1 rounded-full border-2 border-foreground bg-card p-1 shadow-[4px_4px_0_0_var(--foreground)];
+        @apply inline-flex shrink-0 items-center gap-1 rounded-full border-2 border-foreground p-1;
+        background: color-mix(in oklch, var(--card) 94%, var(--background));
+        box-shadow: 4px 4px 0 0 var(--foreground);
     }
 
     .lang-button {
-        @apply inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border-2 border-transparent px-3 py-2 text-sm font-extrabold tracking-[0.04em] text-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground hover:bg-[color:var(--accent-soft)];
+        @apply inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border-2 border-transparent px-3 py-2 text-sm font-extrabold tracking-[0.04em] text-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground hover:bg-[color:var(--accent-soft)] hover:text-accent active:translate-y-0.5 focus-visible:border-foreground;
     }
 
     .lang-button[data-active="true"] {
@@ -160,6 +253,77 @@ select {
             var(--card-shadow, var(--muted));
     }
 
+    .editorial-list {
+        @apply max-w-5xl border-y;
+        border-color: color-mix(in oklch, var(--foreground) 22%, transparent);
+    }
+
+    .editorial-entry {
+        @apply grid gap-4 py-5 sm:gap-5 sm:py-6 lg:grid-cols-[12rem_minmax(0,1fr)_auto] lg:items-start lg:gap-8;
+    }
+
+    .editorial-entry + .editorial-entry {
+        border-top: 1.5px solid color-mix(in oklch, var(--foreground) 18%, transparent);
+    }
+
+    .editorial-meta {
+        @apply flex flex-wrap items-center gap-3 lg:flex-col lg:items-start lg:gap-2;
+    }
+
+    .editorial-copy {
+        @apply min-w-0;
+    }
+
+    .editorial-summary {
+        @apply lg:col-start-2;
+    }
+
+    .editorial-action {
+        @apply flex items-start lg:justify-end;
+    }
+
+    .editorial-link {
+        @apply inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-full border border-transparent px-3 py-2 text-sm font-bold transition-colors duration-300 ease-out hover:bg-card;
+    }
+
+    .editorial-status {
+        @apply inline-flex min-h-11 items-center rounded-full border px-3 py-2 text-xs font-bold uppercase tracking-[0.18em];
+        border-color: color-mix(in oklch, var(--foreground) 18%, transparent);
+        background: color-mix(in oklch, var(--card) 90%, var(--background));
+    }
+
+    .contact-strip {
+        @apply grid rounded-[28px] border-2 border-foreground bg-card px-5 py-2 sm:px-6 lg:grid-cols-3;
+        box-shadow: 4px 4px 0 0 color-mix(in oklch, var(--muted) 76%, var(--background));
+    }
+
+    .contact-item {
+        @apply flex items-center gap-4 rounded-[22px] py-4 transition-colors duration-300 ease-out hover:bg-[color:var(--quaternary-soft)];
+    }
+
+    .contact-item + .contact-item {
+        border-top: 1.5px solid color-mix(in oklch, var(--foreground) 18%, transparent);
+    }
+
+    .contact-icon {
+        @apply inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-foreground;
+        box-shadow: 3px 3px 0 0 color-mix(in oklch, var(--quaternary-soft) 90%, var(--background));
+    }
+
+    .contact-arrow-wrap {
+        @apply inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-transparent transition-colors duration-300 ease-out group-hover:bg-background;
+    }
+
+    .contact-arrow {
+        @apply h-4 w-4 shrink-0 transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5;
+    }
+
+    .hero-social-link {
+        @apply inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-foreground transition-transform duration-300 ease-out hover:-translate-y-0.5;
+        background: color-mix(in oklch, var(--card) 92%, var(--background));
+        box-shadow: 3px 3px 0 0 color-mix(in oklch, var(--accent) 24%, var(--background));
+    }
+
     .candy-button {
         @apply inline-flex min-h-12 items-center justify-between gap-3 rounded-full border-2 border-foreground px-5 py-3 text-foreground transition-all duration-300 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5;
         background: var(--accent-soft);
@@ -176,24 +340,36 @@ select {
     }
 
     .button-arrow {
-        @apply inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-foreground bg-card text-[color:var(--accent)];
+        @apply inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-foreground bg-card text-[color:var(--accent)] transition-transform duration-300 ease-out;
     }
 
     .marquee-shell {
-        @apply overflow-hidden rounded-full border-2 border-foreground px-0 py-4 shadow-[6px_6px_0_0_var(--foreground)];
+        @apply overflow-hidden rounded-full border-2 border-foreground px-0 py-3;
         background: linear-gradient(
             90deg,
-            var(--secondary-soft),
-            var(--tertiary-soft)
+            color-mix(in oklch, var(--secondary-soft) 58%, var(--card)),
+            color-mix(in oklch, var(--tertiary-soft) 52%, var(--card))
         );
+        box-shadow: 3px 3px 0 0 color-mix(in oklch, var(--muted) 74%, var(--background));
     }
 
     .marquee-track {
         display: flex;
         width: max-content;
-        gap: 1rem;
-        padding-inline: 1rem;
-        animation: marquee 28s linear infinite;
+        gap: 0.75rem;
+        padding-inline: 0.75rem;
+        animation: marquee 40s linear infinite;
+    }
+
+    .marquee-chip {
+        @apply inline-flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold text-muted-foreground;
+        border: 1.5px solid color-mix(in oklch, var(--foreground) 14%, transparent);
+        background: color-mix(in oklch, var(--card) 92%, var(--background));
+    }
+
+    .marquee-dot {
+        @apply h-2 w-2 rounded-full;
+        background: color-mix(in oklch, var(--accent) 42%, var(--background));
     }
 
     .dot-grid {
@@ -233,8 +409,21 @@ select {
         --card-shadow-offset: 4px;
     }
 
+    .section-anchor {
+        scroll-margin-top: 9rem;
+    }
+
     .marquee-shell {
         @apply rounded-[28px];
+    }
+}
+
+@media (min-width: 1024px) {
+    .contact-item + .contact-item {
+        border-top: none;
+        border-left: 1.5px solid color-mix(in oklch, var(--foreground) 18%, transparent);
+        padding-left: 1.5rem;
+        margin-left: 1.5rem;
     }
 }
 
