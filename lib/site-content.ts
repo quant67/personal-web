@@ -337,6 +337,31 @@ export const siteContent = {
           en: "Open the Sol Tracker repository",
         },
       },
+      {
+        icon: "sparkles",
+        tone: "secondary",
+        title: {
+          zh: "Vibe Skills for Codex",
+          en: "Vibe Skills for Codex",
+        },
+        summary: {
+          zh: "一个面向 Codex 的 vibe 工作流技能包，把调研、PRD、技术设计、AGENTS 交接和迭代规划串成一套可复用的 MVP 工作流。",
+          en: "A Codex-first vibe workflow skill pack that connects research, PRD, technical design, AGENTS handoff, and iteration planning into one reusable MVP system.",
+        },
+        metric: {
+          zh: "MVP 工作流 + 技能包",
+          en: "MVP workflow + skill pack",
+        },
+        stack: {
+          zh: "Markdown Skills / AGENTS.md / Shell Scripts",
+          en: "Markdown Skills / AGENTS.md / Shell Scripts",
+        },
+        href: "https://github.com/quant67/vibe-skills-codex",
+        ariaLabel: {
+          zh: "打开 Vibe Skills for Codex 项目仓库",
+          en: "Open the Vibe Skills for Codex repository",
+        },
+      },
     ],
   },
   experiments: {

@@ -114,7 +114,10 @@ export function Homepage() {
     getLocaleSnapshot,
     getServerLocaleSnapshot,
   );
-  const hasSingleProject = siteContent.openSourceProjects.items.length === 1;
+  const projectCount = siteContent.openSourceProjects.items.length;
+  const hasSingleProject = projectCount === 1;
+  const hasTwoProjects = projectCount === 2;
+  const showProjectConnector = projectCount >= 3;
   const writingTone: AccentTone = "tertiary";
   const connectTone: AccentTone = "quaternary";
 
@@ -164,10 +167,18 @@ export function Homepage() {
             className={cn(
               "relative mt-6",
               hasSingleProject && "max-w-4xl",
+              hasTwoProjects && "mx-auto max-w-6xl",
             )}
           >
-            {!hasSingleProject ? <ProjectConnector /> : null}
-            <div className={cn("grid gap-6", hasSingleProject ? "grid-cols-1" : "lg:grid-cols-3")}>
+            {showProjectConnector ? <ProjectConnector /> : null}
+            <div
+              className={cn(
+                "grid gap-6",
+                hasSingleProject && "grid-cols-1",
+                hasTwoProjects && "lg:grid-cols-2",
+                projectCount >= 3 && "lg:grid-cols-3",
+              )}
+            >
               {siteContent.openSourceProjects.items.map((item) => (
                 <StickerCard
                   key={item.title.en}
