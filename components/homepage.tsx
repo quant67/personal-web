@@ -28,6 +28,7 @@ import {
   type Locale,
   type LocalizedText,
 } from "@/lib/site-content";
+import { HomepageIntroOverlay } from "@/components/homepage-intro";
 
 const STORAGE_KEY = "personal-web-locale";
 const DEFAULT_LOCALE: Locale = "zh";
@@ -114,6 +115,7 @@ export function Homepage() {
     getLocaleSnapshot,
     getServerLocaleSnapshot,
   );
+  const [isIntroActive, setIsIntroActive] = useState(true);
   const projectCount = siteContent.openSourceProjects.items.length;
   const hasSingleProject = projectCount === 1;
   const hasTwoProjects = projectCount === 2;
@@ -128,134 +130,140 @@ export function Homepage() {
   const marqueeItems = [...siteContent.keywords.items, ...siteContent.keywords.items];
 
   return (
-    <div className="overflow-x-clip bg-background text-foreground">
-      <a className="sr-only focus:not-sr-only" href="#main-content">
-        {localized(siteContent.ui.skipToContent, locale)}
-      </a>
-      <SiteNav locale={locale} onLocaleChange={setStoredLocale} />
-      <main id="main-content" className="section-anchor pb-12 sm:pb-14">
-        <HeroSection locale={locale} />
-        <section aria-labelledby="keywords-heading" className="section-shell py-8 sm:py-10">
-          <h2 id="keywords-heading" className="sr-only">
-            {localized(siteContent.keywords.heading, locale)}
-          </h2>
-          <div className="marquee-shell">
-            <div className="marquee-track">
-              {marqueeItems.map((item, index) => (
-                <span
-                  key={`${item.en}-${index}`}
-                  className="marquee-chip"
-                  lang={localeLang(locale)}
-                >
-                  <span aria-hidden="true" className="marquee-dot" />
-                  <span>{localized(item, locale)}</span>
-                </span>
-              ))}
+    <div className="homepage-stage">
+      <div
+        className="homepage-scene overflow-x-clip bg-background text-foreground"
+        data-intro-active={isIntroActive}
+      >
+        <a className="sr-only focus:not-sr-only" href="#main-content">
+          {localized(siteContent.ui.skipToContent, locale)}
+        </a>
+        <SiteNav locale={locale} onLocaleChange={setStoredLocale} />
+        <main id="main-content" className="section-anchor pb-12 sm:pb-14">
+          <HeroSection locale={locale} />
+          <section aria-labelledby="keywords-heading" className="section-shell py-8 sm:py-10">
+            <h2 id="keywords-heading" className="sr-only">
+              {localized(siteContent.keywords.heading, locale)}
+            </h2>
+            <div className="marquee-shell">
+              <div className="marquee-track">
+                {marqueeItems.map((item, index) => (
+                  <span
+                    key={`${item.en}-${index}`}
+                    className="marquee-chip"
+                    lang={localeLang(locale)}
+                  >
+                    <span aria-hidden="true" className="marquee-dot" />
+                    <span>{localized(item, locale)}</span>
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
-        <HeroProof locale={locale} />
+          </section>
+          <HeroProof locale={locale} />
 
-        <section id="projects" className="section-anchor section-shell py-16 sm:py-20">
-          <SectionHeading
-            icon="code"
-            tone="accent"
-            heading={siteContent.openSourceProjects.heading}
-            locale={locale}
-          />
-          <div
-            className={cn(
-              "relative mt-6",
-              hasSingleProject && "max-w-4xl",
-              hasTwoProjects && "mx-auto max-w-6xl",
-            )}
-          >
-            {showProjectConnector ? <ProjectConnector /> : null}
+          <section id="projects" className="section-anchor section-shell py-16 sm:py-20">
+            <SectionHeading
+              icon="code"
+              tone="accent"
+              heading={siteContent.openSourceProjects.heading}
+              locale={locale}
+            />
             <div
               className={cn(
-                "grid gap-6",
-                hasSingleProject && "grid-cols-1",
-                hasTwoProjects && "lg:grid-cols-2",
-                projectCount >= 3 && "lg:grid-cols-3",
+                "relative mt-6",
+                hasSingleProject && "max-w-4xl",
+                hasTwoProjects && "mx-auto max-w-6xl",
               )}
             >
-              {siteContent.openSourceProjects.items.map((item) => (
-                <StickerCard
+              {showProjectConnector ? <ProjectConnector /> : null}
+              <div
+                className={cn(
+                  "grid gap-6",
+                  hasSingleProject && "grid-cols-1",
+                  hasTwoProjects && "lg:grid-cols-2",
+                  projectCount >= 3 && "lg:grid-cols-3",
+                )}
+              >
+                {siteContent.openSourceProjects.items.map((item) => (
+                  <StickerCard
+                    key={item.title.en}
+                    tone={item.tone}
+                    icon={item.icon}
+                    title={item.title}
+                    body={item.summary}
+                    eyebrow={item.metric}
+                    meta={item.stack}
+                    action={siteContent.ui.visitProject}
+                    href={item.href}
+                    ariaLabel={item.ariaLabel}
+                    locale={locale}
+                  />
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section id="experiments" className="section-anchor section-shell py-16 sm:py-20">
+            <SectionHeading
+              icon="sparkles"
+              tone="secondary"
+              heading={siteContent.experiments.heading}
+              locale={locale}
+            />
+            <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+              {siteContent.experiments.items.map((item, index) => (
+                <ExperimentCard
                   key={item.title.en}
-                  tone={item.tone}
-                  icon={item.icon}
-                  title={item.title}
-                  body={item.summary}
-                  eyebrow={item.metric}
-                  meta={item.stack}
-                  action={siteContent.ui.visitProject}
-                  href={item.href}
-                  ariaLabel={item.ariaLabel}
+                  item={item}
                   locale={locale}
+                  mirrored={index % 2 === 1}
                 />
               ))}
             </div>
-          </div>
-        </section>
+          </section>
 
-        <section id="experiments" className="section-anchor section-shell py-16 sm:py-20">
-          <SectionHeading
-            icon="sparkles"
-            tone="secondary"
-            heading={siteContent.experiments.heading}
-            locale={locale}
-          />
-          <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-            {siteContent.experiments.items.map((item, index) => (
-              <ExperimentCard
-                key={item.title.en}
-                item={item}
-                locale={locale}
-                mirrored={index % 2 === 1}
-              />
-            ))}
-          </div>
-        </section>
+          <section id="writing" className="section-anchor section-shell py-16 sm:py-20">
+            <SectionHeading
+              icon="book"
+              tone={writingTone}
+              heading={siteContent.writing.heading}
+              locale={locale}
+            />
+            <div className="editorial-list mt-8 md:mt-10">
+              {siteContent.writing.items.map((item) => (
+                <WritingCard
+                  key={item.title.en}
+                  item={item}
+                  locale={locale}
+                  tone={writingTone}
+                />
+              ))}
+            </div>
+          </section>
 
-        <section id="writing" className="section-anchor section-shell py-16 sm:py-20">
-          <SectionHeading
-            icon="book"
-            tone={writingTone}
-            heading={siteContent.writing.heading}
-            locale={locale}
-          />
-          <div className="editorial-list mt-8 md:mt-10">
-            {siteContent.writing.items.map((item) => (
-              <WritingCard
-                key={item.title.en}
-                item={item}
-                locale={locale}
-                tone={writingTone}
-              />
-            ))}
-          </div>
-        </section>
-
-        <section id="connect" className="section-anchor section-shell py-16 sm:py-20">
-          <SectionHeading
-            icon="globe"
-            tone={connectTone}
-            heading={siteContent.socialLinks.heading}
-            locale={locale}
-          />
-          <div className="contact-strip mt-8 md:mt-10">
-            {siteContent.socialLinks.items.map((item) => (
-              <SocialCard
-                key={item.title.en}
-                item={item}
-                locale={locale}
-                tone={connectTone}
-              />
-            ))}
-          </div>
-        </section>
-      </main>
-      <FooterNote locale={locale} />
+          <section id="connect" className="section-anchor section-shell py-16 sm:py-20">
+            <SectionHeading
+              icon="globe"
+              tone={connectTone}
+              heading={siteContent.socialLinks.heading}
+              locale={locale}
+            />
+            <div className="contact-strip mt-8 md:mt-10">
+              {siteContent.socialLinks.items.map((item) => (
+                <SocialCard
+                  key={item.title.en}
+                  item={item}
+                  locale={locale}
+                  tone={connectTone}
+                />
+              ))}
+            </div>
+          </section>
+        </main>
+        <FooterNote locale={locale} />
+      </div>
+      <HomepageIntroOverlay locale={locale} onActiveChange={setIsIntroActive} />
     </div>
   );
 }
