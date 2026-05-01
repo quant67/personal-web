@@ -116,10 +116,6 @@ export function Homepage() {
     getServerLocaleSnapshot,
   );
   const [isIntroActive, setIsIntroActive] = useState(true);
-  const projectCount = siteContent.openSourceProjects.items.length;
-  const hasSingleProject = projectCount === 1;
-  const hasTwoProjects = projectCount === 2;
-  const showProjectConnector = projectCount >= 3;
   const writingTone: AccentTone = "tertiary";
   const connectTone: AccentTone = "quaternary";
 
@@ -162,6 +158,8 @@ export function Homepage() {
           </section>
           <HeroProof locale={locale} />
 
+          <ExperienceTimeline locale={locale} />
+
           <section id="projects" className="section-anchor section-shell py-16 sm:py-20">
             <SectionHeading
               icon="code"
@@ -169,39 +167,7 @@ export function Homepage() {
               heading={siteContent.openSourceProjects.heading}
               locale={locale}
             />
-            <div
-              className={cn(
-                "relative mt-6",
-                hasSingleProject && "max-w-4xl",
-                hasTwoProjects && "mx-auto max-w-6xl",
-              )}
-            >
-              {showProjectConnector ? <ProjectConnector /> : null}
-              <div
-                className={cn(
-                  "grid gap-6",
-                  hasSingleProject && "grid-cols-1",
-                  hasTwoProjects && "lg:grid-cols-2",
-                  projectCount >= 3 && "lg:grid-cols-3",
-                )}
-              >
-                {siteContent.openSourceProjects.items.map((item) => (
-                  <StickerCard
-                    key={item.title.en}
-                    tone={item.tone}
-                    icon={item.icon}
-                    title={item.title}
-                    body={item.summary}
-                    eyebrow={item.metric}
-                    meta={item.stack}
-                    action={siteContent.ui.visitProject}
-                    href={item.href}
-                    ariaLabel={item.ariaLabel}
-                    locale={locale}
-                  />
-                ))}
-              </div>
-            </div>
+            <BuildLedger locale={locale} />
           </section>
 
           <section id="experiments" className="section-anchor section-shell py-16 sm:py-20">
@@ -211,16 +177,7 @@ export function Homepage() {
               heading={siteContent.experiments.heading}
               locale={locale}
             />
-            <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-              {siteContent.experiments.items.map((item, index) => (
-                <ExperimentCard
-                  key={item.title.en}
-                  item={item}
-                  locale={locale}
-                  mirrored={index % 2 === 1}
-                />
-              ))}
-            </div>
+            <FieldNotes locale={locale} />
           </section>
 
           <section id="writing" className="section-anchor section-shell py-16 sm:py-20">
@@ -620,216 +577,243 @@ function SectionHeading({
   );
 }
 
-function StickerCard({
-  tone,
-  icon,
-  title,
-  body,
-  eyebrow,
-  meta,
-  action,
-  href,
-  ariaLabel,
-  locale,
-}: {
-  tone: AccentTone;
-  icon: IconKey;
-  title: LocalizedText;
-  body: LocalizedText;
-  eyebrow: LocalizedText;
-  meta: LocalizedText;
-  action: LocalizedText;
-  href: string;
-  ariaLabel: LocalizedText;
-  locale: Locale;
-}) {
-  const Icon = iconMap[icon];
-  const toneStyle = toneStyles[tone];
-
+function ExperienceTimeline({ locale }: { locale: Locale }) {
   return (
-    <article
-      className="sticker-card"
-      style={
-        {
-          "--card-shadow": toneStyle.shadow,
-        } as CSSProperties
-      }
-    >
-      <div className={cn("floating-icon", toneStyle.icon)}>
-        <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
-      </div>
-      <div className="flex h-full flex-col gap-5 pt-6">
-        <div
-          className={cn(
-            "inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]",
-            toneStyle.chip,
-          )}
-          lang={localeLang(locale)}
-        >
-          {localized(eyebrow, locale)}
+    <section id="experience" className="section-anchor section-shell py-16 sm:py-20">
+      <div className="journey-console">
+        <div className="journey-console-aside">
+          <SectionHeading
+            icon="rocket"
+            tone="tertiary"
+            heading={siteContent.experience.heading}
+            locale={locale}
+          />
+          <div className="journey-compass" aria-hidden="true">
+            <span>life route</span>
+            <strong>04</strong>
+            <span>chapters</span>
+          </div>
         </div>
-        <LocalizedTextBlock
-          as="h3"
-          copy={title}
-          locale={locale}
-          className={cn(
-            "font-heading font-extrabold tracking-[-0.04em]",
-            locale === "zh" ? "text-2xl" : "text-[1.65rem] leading-tight",
-          )}
-        />
-        <LocalizedTextBlock
-          as="p"
-          copy={body}
-          locale={locale}
-          className={cn(
-            locale === "zh"
-              ? "text-base leading-7 text-foreground"
-              : "text-sm leading-6 text-muted-foreground",
-          )}
-        />
-        <div className="mt-auto rounded-[18px] border-2 border-dashed border-foreground/25 bg-muted/60 px-4 py-3">
-          <p className="text-sm font-semibold text-foreground" lang={localeLang(locale)}>
-            {localized(meta, locale)}
-          </p>
-        </div>
-        <ActionLink
-          href={href}
-          label={action}
-          ariaLabel={ariaLabel}
-          locale={locale}
-          variant="secondary"
-          external
-          fullWidth
-        />
+        <ol className="journey-rail">
+          {siteContent.experience.items.map((item, index) => {
+            const toneStyle = toneStyles[item.tone];
+
+            return (
+              <li
+                key={item.title.en}
+                className={cn("journey-node", index % 2 === 1 && "journey-node-alt")}
+                style={
+                  {
+                    "--node-tone": toneStyle.shadow,
+                  } as CSSProperties
+                }
+              >
+                <div className="journey-node-marker" aria-hidden="true">
+                  <span>{item.marker}</span>
+                </div>
+                <article className="journey-node-body">
+                  <div className="journey-node-label" lang={localeLang(locale)}>
+                    {localized(item.label, locale)}
+                  </div>
+                  <LocalizedTextBlock
+                    as="h3"
+                    copy={item.title}
+                    locale={locale}
+                    className={cn(
+                      "journey-node-title",
+                      locale === "zh" ? "text-[1.75rem]" : "text-[1.55rem]",
+                    )}
+                  />
+                  <LocalizedTextBlock
+                    as="p"
+                    copy={item.summary}
+                    locale={locale}
+                    className={cn(
+                      "journey-node-summary",
+                      locale === "zh" ? "text-base leading-7" : "text-sm leading-6",
+                    )}
+                  />
+                  <div className="journey-keywords">
+                    {item.keywords.map((keyword) => (
+                      <span key={keyword.en} lang={localeLang(locale)}>
+                        {localized(keyword, locale)}
+                      </span>
+                    ))}
+                  </div>
+                </article>
+              </li>
+            );
+          })}
+        </ol>
       </div>
-    </article>
+    </section>
   );
 }
 
-function ExperimentCard({
-  item,
-  locale,
-  mirrored,
-}: {
-  item: (typeof siteContent.experiments.items)[number];
-  locale: Locale;
-  mirrored?: boolean;
-}) {
-  const Icon = iconMap[item.icon];
-  const toneStyle = toneStyles[item.tone];
-  const experimentHref = getSafeContentHref("href" in item ? item.href : undefined);
-
+function BuildLedger({ locale }: { locale: Locale }) {
   return (
-    <article
-      className={cn(
-        "sticker-card grid gap-6 overflow-hidden lg:grid-cols-[0.88fr_1.12fr]",
-        mirrored && "lg:grid-cols-[1.12fr_0.88fr]",
-      )}
-      style={
-        {
-          "--card-shadow": toneStyle.shadow,
-        } as CSSProperties
-      }
-    >
-      <div
-        className={cn(
-          "relative min-h-[16rem] overflow-hidden rounded-[24px] border-2 border-foreground p-5",
-          toneStyle.panel,
-        )}
-      >
-        <div aria-hidden="true" className="stripe-fill absolute inset-0 opacity-40" />
-        <div className="relative flex h-full flex-col justify-between">
-          <div className={cn("icon-medallion", toneStyle.icon)}>
-            <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
-          </div>
-          <div className="space-y-3">
-            {item.highlights.map((highlight, index) => (
+    <div className="build-ledger mt-8 md:mt-10">
+      {siteContent.openSourceProjects.items.map((item, index) => {
+        const toneStyle = toneStyles[item.tone];
+
+        return (
+          <article
+            key={item.title.en}
+            className="build-ledger-row"
+            style={
+              {
+                "--ledger-tone": toneStyle.shadow,
+              } as CSSProperties
+            }
+          >
+            <div className="build-ledger-index" aria-hidden="true">
+              {String(index + 1).padStart(2, "0")}
+            </div>
+            <div className="build-ledger-main">
               <div
-                key={highlight.en}
                 className={cn(
-                  "max-w-[14rem] rounded-full border-2 border-foreground px-4 py-2 text-sm font-semibold shadow-[4px_4px_0_0_var(--foreground)]",
-                  index === 0 && "bg-card text-foreground",
-                  index === 1 && "bg-[color:var(--tertiary-soft)] text-[color:var(--tertiary-ink)]",
-                  index === 2 && "bg-[color:var(--quaternary-soft)] text-[color:var(--quaternary-ink)]",
+                  "inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]",
+                  toneStyle.chip,
                 )}
                 lang={localeLang(locale)}
               >
-                {localized(highlight, locale)}
+                {localized(item.metric, locale)}
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className={cn("flex flex-col justify-between gap-5", mirrored && "lg:order-first")}>
-        <div
-          className={cn(
-            "inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]",
-            toneStyle.chip,
-          )}
-          lang={localeLang(locale)}
-        >
-          {localized(item.label, locale)}
-        </div>
-        <LocalizedTextBlock
-          as="h3"
-          copy={item.title}
-          locale={locale}
-          className={cn(
-            "font-heading font-extrabold tracking-[-0.05em]",
-            locale === "zh" ? "text-3xl" : "text-[2rem] leading-tight",
-          )}
-        />
-        <LocalizedTextBlock
-          as="p"
-          copy={item.summary}
-          locale={locale}
-          className={cn(
-            locale === "zh"
-              ? "text-base leading-7 text-foreground"
-              : "text-sm leading-6 text-muted-foreground",
-          )}
-        />
-        <div className="grid gap-3 sm:grid-cols-2">
-          {item.details.map((detail) => (
-            <div
-              key={detail.title.en}
-              className="rounded-[18px] border-2 border-foreground bg-card px-4 py-4 shadow-[4px_4px_0_0_var(--muted)]"
-            >
-              <p
-                className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground"
-                lang={localeLang(locale)}
-              >
-                {localized(detail.title, locale)}
-              </p>
-              <p
-                className="mt-3 text-sm leading-6 text-muted-foreground"
-                lang={localeLang(locale)}
-              >
-                {localized(detail.body, locale)}
-              </p>
+              <LocalizedTextBlock
+                as="h3"
+                copy={item.title}
+                locale={locale}
+                className={cn(
+                  "build-ledger-title",
+                  locale === "zh" ? "text-[1.85rem]" : "text-[1.7rem]",
+                )}
+              />
+              <LocalizedTextBlock
+                as="p"
+                copy={item.summary}
+                locale={locale}
+                className={cn(
+                  "build-ledger-summary",
+                  locale === "zh" ? "text-base leading-7" : "text-sm leading-6",
+                )}
+              />
             </div>
-          ))}
-        </div>
-        {experimentHref ? (
-          <ActionLink
-            href={experimentHref}
-            label={siteContent.ui.visitExperiment}
-            ariaLabel={item.ariaLabel}
-            locale={locale}
-            variant="primary"
-            external
-          />
-        ) : (
-          <ActionLink
-            href="#connect"
-            label={siteContent.ui.requestPreview}
-            ariaLabel={item.ariaLabel}
-            locale={locale}
-            variant="primary"
-          />
-        )}
-      </div>
-    </article>
+            <div className="build-ledger-side">
+              <p
+                className="build-ledger-stack"
+                lang={localeLang(locale)}
+              >
+                {localized(item.stack, locale)}
+              </p>
+              <ActionLink
+                href={item.href}
+                label={siteContent.ui.visitProject}
+                ariaLabel={item.ariaLabel}
+                locale={locale}
+                variant="secondary"
+                external
+              />
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
+
+function FieldNotes({ locale }: { locale: Locale }) {
+  return (
+    <div className="field-notes mt-8 md:mt-10">
+      {siteContent.experiments.items.map((item, index) => {
+        const Icon = iconMap[item.icon];
+        const toneStyle = toneStyles[item.tone];
+        const experimentHref = getSafeContentHref("href" in item ? item.href : undefined);
+
+        return (
+          <article
+            key={item.title.en}
+            className={cn("field-note", index % 2 === 1 && "field-note-alt")}
+            style={
+              {
+                "--note-tone": toneStyle.shadow,
+              } as CSSProperties
+            }
+          >
+            <div className="field-note-map">
+              <div className={cn("icon-medallion", toneStyle.icon)}>
+                <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
+              </div>
+              <div className="field-note-label" lang={localeLang(locale)}>
+                {localized(item.label, locale)}
+              </div>
+              <div className="field-note-tags">
+                {item.highlights.map((highlight) => (
+                  <span key={highlight.en} lang={localeLang(locale)}>
+                    {localized(highlight, locale)}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="field-note-copy">
+              <LocalizedTextBlock
+                as="h3"
+                copy={item.title}
+                locale={locale}
+                className={cn(
+                  "field-note-title",
+                  locale === "zh" ? "text-[2rem]" : "text-[1.85rem]",
+                )}
+              />
+              <LocalizedTextBlock
+                as="p"
+                copy={item.summary}
+                locale={locale}
+                className={cn(
+                  "field-note-summary",
+                  locale === "zh" ? "text-base leading-7" : "text-sm leading-6",
+                )}
+              />
+              <div className="field-note-details">
+                {item.details.map((detail) => (
+                  <div key={detail.title.en} className="field-note-detail">
+                    <p
+                      className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground"
+                      lang={localeLang(locale)}
+                    >
+                      {localized(detail.title, locale)}
+                    </p>
+                    <p
+                      className="mt-2 text-sm leading-6 text-muted-foreground"
+                      lang={localeLang(locale)}
+                    >
+                      {localized(detail.body, locale)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              {experimentHref ? (
+                <ActionLink
+                  href={experimentHref}
+                  label={siteContent.ui.visitExperiment}
+                  ariaLabel={item.ariaLabel}
+                  locale={locale}
+                  variant="primary"
+                  external
+                />
+              ) : (
+                <ActionLink
+                  href="#connect"
+                  label={siteContent.ui.requestPreview}
+                  ariaLabel={item.ariaLabel}
+                  locale={locale}
+                  variant="primary"
+                />
+              )}
+            </div>
+          </article>
+        );
+      })}
+    </div>
   );
 }
 
@@ -994,25 +978,6 @@ function FooterNote({ locale }: { locale: Locale }) {
         </div>
       </div>
     </footer>
-  );
-}
-
-function ProjectConnector() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="pointer-events-none absolute left-[8%] top-10 hidden h-32 w-[84%] lg:block"
-      fill="none"
-      viewBox="0 0 1000 180"
-    >
-      <path
-        d="M20 88C120 25 250 24 342 88C448 160 560 152 662 88C770 20 878 22 980 88"
-        stroke="var(--foreground)"
-        strokeDasharray="12 14"
-        strokeLinecap="round"
-        strokeWidth="4"
-      />
-    </svg>
   );
 }
 

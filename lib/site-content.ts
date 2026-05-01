@@ -62,6 +62,17 @@ export type SiteContent = {
     heading: LocalizedText;
     items: LocalizedText[];
   };
+  experience: {
+    heading: SectionHeadingContent;
+    items: Array<{
+      label: LocalizedText;
+      title: LocalizedText;
+      summary: LocalizedText;
+      marker: string;
+      keywords: LocalizedText[];
+      tone: AccentTone;
+    }>;
+  };
   openSourceProjects: {
     heading: SectionHeadingContent;
     items: Array<{
@@ -156,6 +167,13 @@ export const siteContent = {
   navigation: [
     {
       label: {
+        zh: "经历",
+        en: "Journey",
+      },
+      href: "#experience",
+    },
+    {
+      label: {
         zh: "项目",
         en: "Projects",
       },
@@ -197,14 +215,14 @@ export const siteContent = {
       en: "Projects, experiments, and writing, in one place.",
     },
     primaryCta: {
-      href: "#projects",
+      href: "#experience",
       label: {
-        zh: "查看代表项目",
-        en: "Explore projects",
+        zh: "查看个人经历",
+        en: "Follow the journey",
       },
       ariaLabel: {
-        zh: "跳转到代表项目区域",
-        en: "Jump to the featured projects section",
+        zh: "跳转到个人经历区域",
+        en: "Jump to the personal journey section",
       },
     },
     secondaryCta: {
@@ -252,7 +270,7 @@ export const siteContent = {
       },
       note: {
         zh: "我偏爱结构清楚、能长期维护的东西；精益求精，合作共赢。",
-        en: "Content can feel warm, systems can stay sharp, and interfaces do not need to look like every other template on the internet.",
+        en: "Content can feel warm, systems can stay sharp, and interfaces can carry a distinct point of view across the internet.",
       },
     },
   },
@@ -296,6 +314,144 @@ export const siteContent = {
       },
     ],
   },
+  experience: {
+    heading: {
+      eyebrow: {
+        zh: "个人经历",
+        en: "Personal journey",
+      },
+      title: {
+        zh: "一条从教育、牌桌、链上实验到 AI 工作室的路线",
+        en: "A route through education, poker, Web3 experiments, and an AI studio.",
+      },
+      description: {
+        zh: "这些经历共同塑造了我现在的判断方式：重视真实反馈、概率思维、系统实验和长期作品。",
+        en: "These chapters shaped how I make decisions today: real feedback, probabilistic thinking, system experiments, and compounding work.",
+      },
+    },
+    items: [
+      {
+        label: {
+          zh: "起点",
+          en: "Start",
+        },
+        title: {
+          zh: "STEAM 教育创业公司",
+          en: "STEAM education startup",
+        },
+        summary: {
+          zh: "从教育产品和线下交付开始，理解学习体验、课程设计和真实用户反馈。",
+          en: "Started with education products and offline delivery, learning how curriculum, experience, and user feedback connect.",
+        },
+        marker: "01",
+        keywords: [
+          {
+            zh: "教育产品",
+            en: "Education product",
+          },
+          {
+            zh: "线下交付",
+            en: "Offline delivery",
+          },
+          {
+            zh: "用户反馈",
+            en: "User feedback",
+          },
+        ],
+        tone: "tertiary",
+      },
+      {
+        label: {
+          zh: "训练场",
+          en: "Training ground",
+        },
+        title: {
+          zh: "德州扑克半职业",
+          en: "Semi-pro poker",
+        },
+        summary: {
+          zh: "长期训练概率、风险控制、情绪管理和决策质量，让直觉接受数据和纪律的校准。",
+          en: "Trained probability, risk control, emotional discipline, and decision quality over long sessions.",
+        },
+        marker: "02",
+        keywords: [
+          {
+            zh: "概率思维",
+            en: "Probability",
+          },
+          {
+            zh: "风险控制",
+            en: "Risk control",
+          },
+          {
+            zh: "决策质量",
+            en: "Decision quality",
+          },
+        ],
+        tone: "secondary",
+      },
+      {
+        label: {
+          zh: "开放网络",
+          en: "Open network",
+        },
+        title: {
+          zh: "Web3 种种",
+          en: "Many Web3 chapters",
+        },
+        summary: {
+          zh: "经历链上工具、交易系统、社区叙事和开放网络实验，把速度、波动和协作放进同一个现场。",
+          en: "Worked through on-chain tools, trading systems, community narratives, and open-network experiments.",
+        },
+        marker: "03",
+        keywords: [
+          {
+            zh: "链上工具",
+            en: "On-chain tools",
+          },
+          {
+            zh: "交易系统",
+            en: "Trading systems",
+          },
+          {
+            zh: "社区叙事",
+            en: "Community narrative",
+          },
+        ],
+        tone: "accent",
+      },
+      {
+        label: {
+          zh: "现在",
+          en: "Now",
+        },
+        title: {
+          zh: "个人 AI 工作室",
+          en: "Personal AI studio",
+        },
+        summary: {
+          zh: "把 AI 工作流、个人品牌、产品实验和公开构建组合成长期作品系统。",
+          en: "Combining AI workflows, personal brand systems, product experiments, and public building into long-term work.",
+        },
+        marker: "04",
+        keywords: [
+          {
+            zh: "AI 工作流",
+            en: "AI workflows",
+          },
+          {
+            zh: "个人品牌",
+            en: "Personal brand",
+          },
+          {
+            zh: "公开构建",
+            en: "Build in public",
+          },
+        ],
+        tone: "quaternary",
+      },
+    ],
+  },
   openSourceProjects: {
     heading: {
       eyebrow: {
@@ -307,8 +463,8 @@ export const siteContent = {
         en: "Projects I keep refining because they solve problems I still care about.",
       },
       description: {
-        zh: "它们不是截图集。想看我怎么拆问题、怎么取舍、怎么继续维护，从这里会更快。",
-        en: "This set acts as a proof of working style. Instead of just polished screenshots, each project shows how I frame problems, ship features, and refine product decisions over time.",
+        zh: "它们展示拆问题、做取舍、持续维护的方式，从这里能更快理解我的工作习惯。",
+        en: "This set acts as a proof of working style. Each project shows how I frame problems, ship features, and refine product decisions over time.",
       },
     },
     items: [
@@ -371,12 +527,12 @@ export const siteContent = {
         en: "Selected experiments",
       },
       title: {
-        zh: "这些方向还没长成，但我还想继续折腾",
-        en: "Ideas in motion that are still changing shape as I learn from them.",
+        zh: "这些方向正在长出形状，我还想继续折腾",
+        en: "Ideas in motion that keep changing shape as I learn from them.",
       },
       description: {
-        zh: "它们还不成熟，也不打算伪装成熟。现在能看到的，是问题、假设和取舍。",
-        en: "These are not finished-product trophies. They are current bets that reveal where my attention is going and what kinds of long-term product questions I want to keep exploring.",
+        zh: "现在能看到的是问题、假设和取舍，也能看到注意力正在去哪里。",
+        en: "These current bets reveal where my attention is going and what kinds of long-term product questions I want to keep exploring.",
       },
     },
     items: [
@@ -417,7 +573,7 @@ export const siteContent = {
             },
             body: {
               zh: "大多数个人站只是展示面，缺少和内容、关系、转化之间的真实连接。",
-              en: "Most personal sites act like static showcases without a real connection to content, relationships, and conversion.",
+              en: "Many personal sites act like static showcases, with weak links to content, relationships, and conversion.",
             },
           },
           {
@@ -426,7 +582,7 @@ export const siteContent = {
               en: "Current phase",
             },
             body: {
-              zh: "正在探索更轻量的内容后台与更自然的关注者入口，不急着产品化，先找到正确工作流。",
+              zh: "正在探索更轻量的内容后台与更自然的关注者入口，先找到正确工作流，再考虑产品化。",
               en: "I am exploring a lighter content backend and more natural follower entry points before turning it into a product.",
             },
           },
@@ -448,8 +604,8 @@ export const siteContent = {
           en: "Second Brain Playground",
         },
         summary: {
-          zh: "一个把阅读、摘录、思考和执行动作重新接起来的个人知识实验，希望让知识系统不再只是收藏夹，而是能推动下一步行动。",
-          en: "A personal knowledge experiment that reconnects reading, extraction, reflection, and execution so a second brain can drive action instead of turning into a graveyard.",
+          zh: "一个把阅读、摘录、思考和执行动作重新接起来的个人知识实验，希望让知识系统从收藏夹走向行动引擎。",
+          en: "A personal knowledge experiment that reconnects reading, extraction, reflection, and execution so a second brain can drive action from saved knowledge.",
         },
         highlights: [
           {
@@ -482,7 +638,7 @@ export const siteContent = {
               en: "Current phase",
             },
             body: {
-              zh: "正在测试检索方式、语义分层和轻提醒机制，重点不是大而全，而是刚好够用。",
+              zh: "正在测试检索方式、语义分层和轻提醒机制，重点放在刚好够用的体验。",
               en: "I am testing retrieval models, semantic layers, and light reminder mechanics with an emphasis on enoughness over breadth.",
             },
           },
@@ -505,8 +661,8 @@ export const siteContent = {
         en: "Writing that captures both the making and the thinking behind it.",
       },
       description: {
-        zh: "我写东西，通常不是为了表达情绪，而是想把一个问题想清楚，再留下一份能复用的版本。",
-        en: "I prefer publishing reusable thinking rather than pure reaction, so the writing lives at the intersection of systems, products, content, and personal growth.",
+        zh: "我写东西，通常是想把一个问题想清楚，再留下一份能复用的版本。",
+        en: "I publish reusable thinking, so the writing lives at the intersection of systems, products, content, and personal growth.",
       },
     },
     items: [
@@ -518,8 +674,8 @@ export const siteContent = {
           en: "Systems",
         },
         title: {
-          zh: "个人品牌这件事，最后拼的不是页面",
-          en: "Why a personal brand needs an operating system, not just a landing page",
+          zh: "个人品牌这件事，最后拼的是作品操作系统",
+          en: "Why a personal brand needs an operating system",
         },
         summary: {
           zh: "写给想把内容、产品和机会连接起来的人，核心是如何从“单次输出”过渡到“可复利的作品结构”。",
@@ -546,8 +702,8 @@ export const siteContent = {
           en: "Five missing layers between a clever AI demo and a product people keep using",
         },
         summary: {
-          zh: "不是模型能力越强越好，而是输入、记忆、反馈和出口要一起工作，这篇会拆我最常用的产品判断框架。",
-          en: "Raw model capability is not enough; the input, memory, feedback, and output layers have to work together. This essay unpacks the product lens I return to most.",
+          zh: "模型能力只是起点，输入、记忆、反馈和出口要一起工作，这篇会拆我最常用的产品判断框架。",
+          en: "Raw model capability is the starting layer; the input, memory, feedback, and output layers have to work together. This essay unpacks the product lens I return to most.",
         },
         meta: {
           zh: "草稿中 · 即将公开",
@@ -566,8 +722,8 @@ export const siteContent = {
           en: "Public building",
         },
         title: {
-          zh: "后来我发现，公开构建不只是汇报进度",
-          en: "Why I stopped publishing only what I made and started sharing what I learned",
+          zh: "后来我发现，公开构建也要分享学习过程",
+          en: "Why I started sharing what I learned while building",
         },
         summary: {
           zh: "记录公开构建的转向：从结果导向到学习导向，也让输出更能帮助后来者理解真实过程。",
@@ -689,7 +845,7 @@ export const siteContent = {
   footerNote: {
     heading: {
       zh: "这页还没定稿，我也还在继续折腾",
-      en: "This is not a frozen calling card. It is a living map of what I am building and learning.",
+      en: "This is a living map of what I am building and learning.",
     },
     body: {
       zh: "这里的东西会继续改。有些会留下，有些会被推翻，有些只是阶段性答案。如果某个方向刚好和你有关，直接联系就行。",

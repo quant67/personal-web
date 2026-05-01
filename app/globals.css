@@ -298,6 +298,265 @@ select {
         @apply mt-3 max-w-2xl text-muted-foreground;
     }
 
+    .journey-console {
+        @apply relative overflow-hidden rounded-[34px] border-2 border-foreground bg-card px-5 py-6 sm:px-7 sm:py-8 lg:grid lg:grid-cols-[0.78fr_1.22fr] lg:gap-10 lg:px-8 lg:py-10;
+        box-shadow: 8px 8px 0 0 color-mix(in oklch, var(--tertiary) 42%, var(--background));
+    }
+
+    .journey-console::before {
+        content: "";
+        position: absolute;
+        inset: 1rem;
+        border-radius: 28px;
+        background-image:
+            radial-gradient(
+                circle,
+                color-mix(in oklch, var(--foreground) 14%, transparent) 1px,
+                transparent 1.2px
+            ),
+            linear-gradient(
+                135deg,
+                transparent 0 72%,
+                color-mix(in oklch, var(--secondary) 18%, transparent) 72% 100%
+            );
+        background-position:
+            center,
+            center;
+        background-size:
+            18px 18px,
+            100% 100%;
+        opacity: 0.55;
+        pointer-events: none;
+    }
+
+    .journey-console::after {
+        content: "";
+        position: absolute;
+        top: -4rem;
+        right: -3rem;
+        width: clamp(8rem, 18vw, 15rem);
+        aspect-ratio: 1;
+        border: 2px solid var(--foreground);
+        border-radius: 32% 68% 55% 45%;
+        background: color-mix(in oklch, var(--accent) 13%, var(--card));
+        transform: rotate(14deg);
+    }
+
+    .journey-console .section-heading {
+        @apply relative z-10 block;
+    }
+
+    .journey-console .section-heading-copy {
+        @apply max-w-none;
+    }
+
+    .journey-console-aside {
+        @apply relative z-10;
+    }
+
+    .journey-compass {
+        @apply relative z-10 mt-8 flex w-fit items-center gap-3 rounded-full border-2 border-foreground bg-background px-4 py-3 font-heading text-xs font-extrabold uppercase tracking-[0.18em] text-muted-foreground;
+        box-shadow: 4px 4px 0 0 var(--foreground);
+    }
+
+    .journey-compass strong {
+        @apply text-2xl tracking-[-0.04em] text-foreground;
+    }
+
+    .journey-rail {
+        @apply relative z-10 mt-9 grid gap-6 pl-0 lg:mt-0;
+    }
+
+    .journey-rail::before {
+        content: "";
+        position: absolute;
+        top: 0.7rem;
+        bottom: 0.7rem;
+        left: 1.55rem;
+        width: 4px;
+        border-radius: 999px;
+        background: repeating-linear-gradient(
+            to bottom,
+            var(--foreground) 0 18px,
+            transparent 18px 30px
+        );
+        opacity: 0.75;
+    }
+
+    .journey-node {
+        @apply relative grid grid-cols-[3.4rem_minmax(0,1fr)] items-start gap-4;
+    }
+
+    .journey-node-marker {
+        @apply relative z-10 flex h-12 w-12 items-center justify-center rounded-full border-2 border-foreground bg-card font-heading text-sm font-extrabold text-foreground;
+        box-shadow: 4px 4px 0 0 var(--node-tone, var(--accent));
+    }
+
+    .journey-node-body {
+        @apply relative rounded-[26px] border-2 border-foreground bg-card px-5 py-5 sm:px-6;
+        box-shadow: 6px 6px 0 0 var(--node-tone, var(--accent));
+    }
+
+    .journey-node-body::after {
+        content: "";
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+        width: 2.25rem;
+        aspect-ratio: 1;
+        border: 2px solid color-mix(in oklch, var(--foreground) 30%, transparent);
+        border-radius: 999px;
+        background: color-mix(in oklch, var(--node-tone, var(--accent)) 16%, transparent);
+    }
+
+    .journey-node-label {
+        @apply relative z-10 mb-3 inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em];
+        background: color-mix(in oklch, var(--node-tone, var(--accent)) 16%, var(--card));
+        color: var(--foreground);
+    }
+
+    .journey-node-title {
+        @apply relative z-10 font-heading font-extrabold leading-tight tracking-[-0.045em] text-foreground;
+    }
+
+    .journey-node-summary {
+        @apply relative z-10 mt-3 max-w-[62ch] text-muted-foreground;
+    }
+
+    .journey-keywords {
+        @apply relative z-10 mt-5 flex flex-wrap gap-2;
+    }
+
+    .journey-keywords span {
+        @apply inline-flex rounded-full border border-foreground/20 bg-background px-3 py-1 text-xs font-bold text-foreground;
+    }
+
+    .build-ledger {
+        @apply overflow-hidden rounded-[34px] border-2 border-foreground bg-card;
+        box-shadow: 8px 8px 0 0 color-mix(in oklch, var(--accent) 28%, var(--background));
+    }
+
+    .build-ledger-row {
+        @apply relative grid gap-5 px-5 py-6 sm:px-6 lg:grid-cols-[4.5rem_minmax(0,1fr)_minmax(16rem,0.52fr)] lg:items-center lg:gap-7 lg:px-7;
+        background:
+            linear-gradient(
+                90deg,
+                color-mix(in oklch, var(--ledger-tone, var(--accent)) 10%, var(--card)),
+                var(--card) 48%
+            );
+    }
+
+    .build-ledger-row::after {
+        content: "";
+        position: absolute;
+        right: clamp(1rem, 3vw, 2rem);
+        top: 1.2rem;
+        width: 3.75rem;
+        aspect-ratio: 1;
+        border: 2px solid color-mix(in oklch, var(--foreground) 28%, transparent);
+        border-radius: 26% 74% 56% 44%;
+        background: color-mix(in oklch, var(--ledger-tone, var(--accent)) 18%, transparent);
+        transform: rotate(-10deg);
+    }
+
+    .build-ledger-row + .build-ledger-row {
+        border-top: 2px solid var(--foreground);
+    }
+
+    .build-ledger-index {
+        @apply font-heading text-[2.35rem] font-extrabold leading-none tracking-[-0.08em] text-foreground lg:text-[2.7rem];
+    }
+
+    .build-ledger-main {
+        @apply relative z-10 min-w-0;
+    }
+
+    .build-ledger-title {
+        @apply mt-4 font-heading font-extrabold leading-tight tracking-[-0.045em] text-foreground;
+    }
+
+    .build-ledger-summary {
+        @apply mt-3 max-w-[70ch] text-muted-foreground;
+    }
+
+    .build-ledger-side {
+        @apply relative z-10 flex flex-col items-start gap-4;
+    }
+
+    .build-ledger-stack {
+        @apply rounded-[20px] border-2 border-dashed border-foreground/25 bg-background px-4 py-3 text-sm font-bold leading-6 text-foreground;
+    }
+
+    .field-notes {
+        @apply grid gap-7;
+    }
+
+    .field-note {
+        @apply relative grid gap-6 overflow-hidden rounded-[32px] border-2 border-foreground bg-card px-5 py-6 sm:px-6 lg:grid-cols-[0.7fr_1.3fr] lg:items-center lg:gap-9 lg:px-7 lg:py-7;
+        box-shadow: 6px 6px 0 0 var(--note-tone, var(--secondary));
+    }
+
+    .field-note::before {
+        content: "";
+        position: absolute;
+        inset: auto -3rem -4rem auto;
+        width: clamp(9rem, 22vw, 16rem);
+        aspect-ratio: 1;
+        border: 2px solid color-mix(in oklch, var(--foreground) 26%, transparent);
+        border-radius: 999px;
+        background:
+            repeating-linear-gradient(
+                -35deg,
+                transparent 0 12px,
+                color-mix(in oklch, var(--note-tone, var(--secondary)) 16%, transparent) 12px 22px
+            );
+    }
+
+    .field-note-alt {
+        @apply lg:grid-cols-[1.3fr_0.7fr];
+    }
+
+    .field-note-alt .field-note-map {
+        @apply lg:order-2;
+    }
+
+    .field-note-map {
+        @apply relative z-10 flex flex-col items-start gap-5;
+    }
+
+    .field-note-label {
+        @apply rounded-full border-2 border-foreground bg-background px-4 py-2 text-xs font-extrabold uppercase tracking-[0.2em] text-foreground;
+        box-shadow: 4px 4px 0 0 color-mix(in oklch, var(--note-tone, var(--secondary)) 45%, var(--background));
+    }
+
+    .field-note-tags {
+        @apply flex flex-wrap gap-2;
+    }
+
+    .field-note-tags span {
+        @apply rounded-full border border-foreground/20 bg-background px-3 py-1 text-xs font-bold text-muted-foreground;
+    }
+
+    .field-note-copy {
+        @apply relative z-10 min-w-0;
+    }
+
+    .field-note-title {
+        @apply font-heading font-extrabold leading-tight tracking-[-0.05em] text-foreground;
+    }
+
+    .field-note-summary {
+        @apply mt-4 max-w-[68ch] text-muted-foreground;
+    }
+
+    .field-note-details {
+        @apply my-6 grid gap-4 sm:grid-cols-2;
+    }
+
+    .field-note-detail {
+        @apply rounded-[22px] border border-foreground/20 bg-background px-4 py-4;
+    }
+
     .proof-shell {
         @apply grid gap-4 rounded-[28px] border-2 border-foreground px-4 py-4 sm:px-5 sm:py-5 lg:grid-cols-[0.88fr_1.12fr] lg:items-center;
         background: color-mix(in oklch, var(--card) 94%, var(--background));
@@ -756,9 +1015,70 @@ select {
     .marquee-shell {
         @apply rounded-[28px];
     }
+
+    .journey-console {
+        @apply rounded-[28px] px-4 py-5;
+        box-shadow: 4px 4px 0 0 color-mix(in oklch, var(--tertiary) 42%, var(--background));
+    }
+
+    .journey-compass {
+        @apply mt-6 text-[0.68rem];
+    }
+
+    .journey-rail {
+        @apply gap-5;
+    }
+
+    .journey-rail::before {
+        left: 1.35rem;
+    }
+
+    .journey-node {
+        @apply grid-cols-[3rem_minmax(0,1fr)] gap-3;
+    }
+
+    .journey-node-marker {
+        @apply h-11 w-11;
+    }
+
+    .journey-node-body {
+        @apply rounded-[22px] px-4 py-4;
+        box-shadow: 4px 4px 0 0 var(--node-tone, var(--accent));
+    }
+
+    .build-ledger {
+        @apply rounded-[28px];
+        box-shadow: 4px 4px 0 0 color-mix(in oklch, var(--accent) 28%, var(--background));
+    }
+
+    .build-ledger-row {
+        @apply px-4 py-5;
+    }
+
+    .build-ledger-row::after {
+        @apply hidden;
+    }
+
+    .field-note {
+        @apply rounded-[28px] px-4 py-5;
+        box-shadow: 4px 4px 0 0 var(--note-tone, var(--secondary));
+    }
 }
 
 @media (min-width: 1024px) {
+    .journey-console-aside {
+        align-self: start;
+    }
+
+    .journey-node-alt .journey-node-body {
+        transform: translateX(clamp(0.75rem, 3vw, 2.25rem));
+    }
+
+    .build-ledger-side {
+        align-items: flex-end;
+        text-align: right;
+    }
+
     .contact-item + .contact-item {
         border-top: none;
         border-left: 1.5px solid color-mix(in oklch, var(--foreground) 18%, transparent);
