@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-03T04:07:58+08:00",
+  "title": "Design System: Sixseven Labs",
+  "extensions": {
+    "colorMeta": {
+      "warm-paper-bg": {
+        "role": "neutral",
+        "displayName": "Warm Paper Background",
+        "canonical": "#f6f2ea",
+        "tonalRamp": [
+          "oklch(18% 0.012 84)",
+          "oklch(28% 0.012 84)",
+          "oklch(40% 0.012 84)",
+          "oklch(52% 0.012 84)",
+          "oklch(66% 0.012 84)",
+          "oklch(78% 0.012 84)",
+          "oklch(88% 0.012 84)",
+          "oklch(96% 0.012 84)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Primary Ink",
+        "canonical": "#171511",
+        "tonalRamp": [
+          "oklch(15% 0.01 84)",
+          "oklch(24% 0.01 84)",
+          "oklch(34% 0.01 84)",
+          "oklch(46% 0.01 84)",
+          "oklch(58% 0.01 84)",
+          "oklch(70% 0.01 84)",
+          "oklch(82% 0.01 84)",
+          "oklch(94% 0.01 84)"
+        ]
+      },
+      "electric-blue": {
+        "role": "primary",
+        "displayName": "Electric Annotation Blue",
+        "canonical": "#2458f5",
+        "tonalRamp": [
+          "oklch(16% 0.12 265)",
+          "oklch(26% 0.15 265)",
+          "oklch(38% 0.18 265)",
+          "oklch(50% 0.21 265)",
+          "oklch(62% 0.2 265)",
+          "oklch(74% 0.16 265)",
+          "oklch(86% 0.1 265)",
+          "oklch(95% 0.04 265)"
+        ]
+      },
+      "soft-blue": {
+        "role": "secondary",
+        "displayName": "Soft Sky Annotation",
+        "canonical": "#8aa8ff",
+        "tonalRamp": [
+          "oklch(18% 0.1 265)",
+          "oklch(30% 0.12 265)",
+          "oklch(42% 0.14 265)",
+          "oklch(54% 0.15 265)",
+          "oklch(66% 0.13 265)",
+          "oklch(78% 0.1 265)",
+          "oklch(88% 0.06 265)",
+          "oklch(96% 0.025 265)"
+        ]
+      },
+      "violet-note": {
+        "role": "secondary",
+        "displayName": "Violet Note",
+        "canonical": "#7a6df0",
+        "tonalRamp": [
+          "oklch(17% 0.1 290)",
+          "oklch(29% 0.13 290)",
+          "oklch(41% 0.16 290)",
+          "oklch(53% 0.18 290)",
+          "oklch(65% 0.15 290)",
+          "oklch(77% 0.11 290)",
+          "oklch(88% 0.07 290)",
+          "oklch(96% 0.03 290)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headlines, intro title, and high-personality page moments."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section titles and major page landmarks."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Project, experiment, writing, and journey item titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Bilingual summaries and explanatory content."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Eyebrows, metadata, status labels, and category markers."
+      }
+    },
+    "shadows": [
+      {
+        "name": "navigation-ambient",
+        "value": "0 0.8rem 2rem color-mix(in oklch, var(--foreground) 3%, transparent)",
+        "purpose": "Resting sticky navigation."
+      },
+      {
+        "name": "navigation-scrolled",
+        "value": "0 1rem 2.4rem color-mix(in oklch, var(--foreground) 5%, transparent)",
+        "purpose": "Sticky navigation after scroll."
+      },
+      {
+        "name": "social-hover-lift",
+        "value": "0 0.75rem 1.6rem color-mix(in oklch, var(--foreground) 10%, transparent), 0 0 0 0.28rem color-mix(in oklch, var(--foreground) 7%, transparent)",
+        "purpose": "Round icon links on hover and focus."
+      },
+      {
+        "name": "road-vehicle-shadow",
+        "value": "drop-shadow(0 0.85rem 1rem color-mix(in oklch, var(--foreground) 9%, transparent))",
+        "purpose": "Interactive road car."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-quart",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Primary state transitions, intro motion, and panel entry."
+      },
+      {
+        "name": "marquee-loop",
+        "value": "42s linear infinite",
+        "purpose": "Keyword marquee movement."
+      },
+      {
+        "name": "road-story",
+        "value": "1900ms linear both",
+        "purpose": "Road path and car story animation."
+      },
+      {
+        "name": "native-intro-avatar",
+        "value": "2380ms cubic-bezier(0.22, 1, 0.36, 1) both",
+        "purpose": "First-visit avatar path."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "tablet-intro",
+        "value": "900px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "wide-intro",
+        "value": "1181px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Pill Action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Compact filled pill for primary section actions.",
+      "html": "<a class=\"ds-primary-pill\" href=\"#\"><span>Follow the journey</span><span class=\"ds-button-arrow\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\"><path d=\"M5 12h14M13 5l7 7-7 7\"/></svg></span></a>",
+      "css": ".ds-primary-pill { display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: space-between; gap: 0.75rem; border: 1px solid #171511; border-radius: 999px; background: #171511; color: #f6f2ea; padding: 0.625rem 1rem; font-family: Plus Jakarta Sans, Segoe UI, sans-serif; font-size: 0.875rem; font-weight: 700; text-decoration: none; transition: background-color 200ms ease, color 200ms ease; } .ds-primary-pill:hover { background: color-mix(in oklch, #171511 82%, #2458f5); } .ds-primary-pill:focus-visible { outline: 2px solid #2458f5; outline-offset: 4px; } .ds-button-arrow { display: inline-flex; width: 1.75rem; height: 1.75rem; align-items: center; justify-content: center; border: 1px solid color-mix(in oklch, #f6f2ea 64%, transparent); border-radius: 999px; } .ds-button-arrow svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: transform 300ms ease-out; } .ds-primary-pill:hover svg { transform: translateX(0.125rem); }"
+    },
+    {
+      "name": "Secondary Outline Pill",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Outlined pill for secondary navigation and return actions.",
+      "html": "<a class=\"ds-outline-pill\" href=\"#\"><span>Say hello</span><span class=\"ds-button-arrow\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\"><path d=\"M5 12h14M13 5l7 7-7 7\"/></svg></span></a>",
+      "css": ".ds-outline-pill { display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: space-between; gap: 0.75rem; border: 1px solid #171511; border-radius: 999px; background: transparent; color: #171511; padding: 0.625rem 1rem; font-family: Plus Jakarta Sans, Segoe UI, sans-serif; font-size: 0.875rem; font-weight: 700; text-decoration: none; transition: background-color 200ms ease, color 200ms ease; } .ds-outline-pill:hover { background: #171511; color: #f6f2ea; } .ds-outline-pill:focus-visible { outline: 2px solid #2458f5; outline-offset: 4px; } .ds-outline-pill .ds-button-arrow { display: inline-flex; width: 1.75rem; height: 1.75rem; align-items: center; justify-content: center; border: 1px solid currentColor; border-radius: 999px; } .ds-outline-pill svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: transform 300ms ease-out; } .ds-outline-pill:hover svg { transform: translateX(0.125rem); }"
+    },
+    {
+      "name": "Navigation Sticker",
+      "kind": "nav",
+      "refersTo": "nav-sticker",
+      "description": "Sticky warm-paper navigation with brand block, anchor pills, and language toggle.",
+      "html": "<nav class=\"ds-nav-sticker\"><div class=\"ds-nav-brand\"><span class=\"ds-nav-avatar\"></span><span><strong>Sixseven Labs</strong><small>AI Native</small></span></div><div class=\"ds-nav-list\"><a href=\"#\">Journey</a><a href=\"#\">Projects</a><a href=\"#\">Writing</a></div><div class=\"ds-lang\"><button aria-pressed=\"true\">中</button><button>EN</button></div></nav>",
+      "css": ".ds-nav-sticker { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid color-mix(in oklch, #171511 13%, transparent); border-radius: 1.15rem; background: #fbf7ef; color: #171511; padding: 0.72rem 0.76rem; box-shadow: 0 0.8rem 2rem color-mix(in oklch, #171511 3%, transparent); font-family: Plus Jakarta Sans, Segoe UI, sans-serif; } .ds-nav-brand { display: flex; align-items: center; gap: 0.7rem; min-width: 0; } .ds-nav-avatar { width: 2.4rem; height: 2.4rem; border-radius: 0.78rem; background: #f6f2ea; border: 1px solid color-mix(in oklch, #171511 14%, transparent); } .ds-nav-brand strong { display: block; font-family: Outfit, Avenir Next, Segoe UI, sans-serif; font-size: 0.95rem; font-weight: 800; letter-spacing: -0.02em; } .ds-nav-brand small { display: block; margin-top: 0.25rem; color: #6b655b; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; } .ds-nav-list { display: flex; gap: 0.375rem; } .ds-nav-list a { border-radius: 999px; color: #6b655b; padding: 0.65rem 0.75rem; font-size: 0.875rem; font-weight: 700; text-decoration: none; } .ds-nav-list a:hover, .ds-nav-list a:focus-visible { color: #171511; outline: 0; } .ds-lang { display: inline-flex; gap: 0.25rem; border: 1px solid color-mix(in oklch, #171511 14%, transparent); border-radius: 999px; background: #f6f2ea; padding: 0.25rem; } .ds-lang button { min-width: 2.25rem; min-height: 2.25rem; border: 0; border-radius: 999px; background: transparent; color: #6b655b; font-weight: 800; } .ds-lang button[aria-pressed=\"true\"] { background: #171511; color: #f6f2ea; }"
+    },
+    {
+      "name": "Keyword Marquee Chip",
+      "kind": "chip",
+      "refersTo": "marquee-chip",
+      "description": "Small moving label with electric dot for topic keywords.",
+      "html": "<span class=\"ds-marquee-chip\"><span class=\"ds-marquee-dot\" aria-hidden=\"true\"></span><span>AI workflows</span></span>",
+      "css": ".ds-marquee-chip { display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; color: #6b655b; font-family: Plus Jakarta Sans, Segoe UI, sans-serif; font-size: 0.875rem; font-weight: 600; } .ds-marquee-dot { width: 0.375rem; height: 0.375rem; border-radius: 999px; background: #2458f5; }"
+    },
+    {
+      "name": "Ledger Row",
+      "kind": "card",
+      "refersTo": "build-ledger-row",
+      "description": "Project row that uses numbers, hairlines, and compact metadata.",
+      "html": "<article class=\"ds-ledger-row\"><div class=\"ds-ledger-index\">01</div><div><p class=\"ds-ledger-meta\">Wallet tracking + signal alerts</p><h3>Sol Tracker</h3><p class=\"ds-ledger-summary\">Solana wallet tracking, price signals, and Telegram alerts.</p></div><p class=\"ds-ledger-stack\">Next.js / Supabase / Helius / Telegram Bot</p></article>",
+      "css": ".ds-ledger-row { display: grid; grid-template-columns: 4rem minmax(0, 1fr) minmax(14rem, 0.46fr); gap: 2rem; align-items: start; border-top: 1px solid color-mix(in oklch, #171511 16%, transparent); padding: 1.5rem 0; color: #171511; font-family: Plus Jakarta Sans, Segoe UI, sans-serif; } .ds-ledger-index { font-family: Outfit, Avenir Next, Segoe UI, sans-serif; font-size: 1.45rem; font-weight: 900; letter-spacing: -0.07em; line-height: 1; } .ds-ledger-meta { margin: 0; color: #6b655b; font-size: 0.7rem; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; } .ds-ledger-row h3 { margin: 0.45rem 0 0; font-family: Outfit, Avenir Next, Segoe UI, sans-serif; font-size: clamp(1.55rem, 2.6vw, 2.25rem); font-weight: 900; letter-spacing: -0.055em; line-height: 1; } .ds-ledger-summary { max-width: 48rem; margin: 0.55rem 0 0; color: #6b655b; font-size: 0.95rem; line-height: 1.65; } .ds-ledger-stack { max-width: 18rem; margin: 0; color: #6b655b; font-size: 0.84rem; font-weight: 700; line-height: 1.55; text-align: right; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Builder's Field Ledger",
+    "overview": "Sixseven Labs is a composed personal brand surface for a creator whose proof lives in projects, experiments, writing, and public trajectory. The system feels like a warm field ledger: structured rows, clear labels, tactile paper surfaces, and a few signature interactions that make the path memorable.\n\nThe site uses professional restraint as its default posture. Typography carries authority, hairlines organize the page, and warm neutrals keep the reading environment calm. Blue and violet accents appear as precise annotations across focus states, motion anchors, and selected marks.\n\nChinese leads the narrative, English supports the structure, and both languages stay compact. The strongest visual moments are the native intro, the journey road, the keyword marquee, the sticky navigation sticker, and ledger-style project rows.",
+    "keyCharacteristics": [
+      "Warm paper canvas with ink-first typography.",
+      "Hairline-led sections with dense, readable content rhythm.",
+      "Heavy Outfit headings paired with steady Plus Jakarta Sans body copy.",
+      "Rounded pills and circular avatar geometry used as signature shapes.",
+      "Motion that reveals trajectory and respects reduced-motion preferences."
+    ],
+    "rules": [
+      {
+        "name": "The Annotation Rule",
+        "body": "Blue works as a mark of intent: focus, action, selection, and tiny movement cues.",
+        "section": "colors"
+      },
+      {
+        "name": "The Paper First Rule",
+        "body": "Large surfaces stay in the warm paper family so the site feels calm, readable, and personal.",
+        "section": "colors"
+      },
+      {
+        "name": "The Bilingual Priority Rule",
+        "body": "Chinese carries the primary narrative; English clarifies and supports with quieter rhythm.",
+        "section": "typography"
+      },
+      {
+        "name": "The Compact Authority Rule",
+        "body": "Headings are heavy and tight. Body copy stays open enough for scanning and long enough for trust.",
+        "section": "typography"
+      },
+      {
+        "name": "The Ledger Line Rule",
+        "body": "Sections, rows, ledgers, and strips use hairline dividers as their primary structure.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Responsive Lift Rule",
+        "body": "Shadows intensify through interaction: hover, focus, scroll, and animated story moments.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep the site in light mode with warm paper surfaces.",
+      "Do let Chinese lead and use English as clean support text.",
+      "Do use hairline rules for structure before adding boxes.",
+      "Do preserve electric blue for action, selection, focus, and small animated marks.",
+      "Do use Outfit for bold headings and Plus Jakarta Sans for bilingual body copy.",
+      "Do keep focus states obvious with a 2px Electric Annotation Blue outline and 4px offset.",
+      "Do respect reduced-motion settings across new animations."
+    ],
+    "donts": [
+      "Don't make the site feel like a polished corporate portfolio.",
+      "Don't use overly formal resume language as the main brand voice.",
+      "Don't replace the current ledger rhythm with generic case-study tiles.",
+      "Don't turn project sections into identical icon-card grids.",
+      "Don't use purple-blue gradients as the main identity device.",
+      "Don't add glass panels, blur-heavy surfaces, or decorative gradient text.",
+      "Don't use colored side-stripe borders on cards, alerts, rows, or callouts."
+    ]
+  }
+}

@@ -207,12 +207,12 @@ export const siteContent = {
       en: "Sixseven",
     },
     title: {
-      zh: "用AI发掘更多的可能性",
-      en: "I build useful tools and systems with AI.",
+      zh: "AI Native 生活",
+      en: "AI Native living",
     },
     description: {
-      zh: "项目、实验，还有一些边做边想的事。",
-      en: "Projects, experiments, and writing, in one place.",
+      zh: "项目、实验、写作和长期作品。",
+      en: "Projects, experiments, writing, and long-term work.",
     },
     primaryCta: {
       href: "#experience",
@@ -321,12 +321,12 @@ export const siteContent = {
         en: "Personal journey",
       },
       title: {
-        zh: "一条从教育、牌桌、链上实验到 AI 工作室的路线",
-        en: "A route through education, poker, Web3 experiments, and an AI studio.",
+        zh: "经历",
+        en: "Journey",
       },
       description: {
-        zh: "这些经历共同塑造了我现在的判断方式：重视真实反馈、概率思维、系统实验和长期作品。",
-        en: "These chapters shaped how I make decisions today: real feedback, probabilistic thinking, system experiments, and compounding work.",
+        zh: "教育、牌桌、链上实验、AI 工作室。",
+        en: "Education, poker, Web3, and an AI studio.",
       },
     },
     items: [
@@ -459,12 +459,12 @@ export const siteContent = {
         en: "Selected open source",
       },
       title: {
-        zh: "想知道我平时怎么做事，先看这些项目",
-        en: "Projects I keep refining because they solve problems I still care about.",
+        zh: "项目",
+        en: "Projects",
       },
       description: {
-        zh: "它们展示拆问题、做取舍、持续维护的方式，从这里能更快理解我的工作习惯。",
-        en: "This set acts as a proof of working style. Each project shows how I frame problems, ship features, and refine product decisions over time.",
+        zh: "我持续维护的工具和系统。",
+        en: "Tools and systems I keep refining.",
       },
     },
     items: [
@@ -476,8 +476,8 @@ export const siteContent = {
           en: "Sol Tracker",
         },
         summary: {
-          zh: "一个面向 Solana 的链上钱包与价格信号监控系统，实时跟踪目标钱包的 Swap 交易，在 Dashboard 中集中查看记录、策略与告警历史，并通过 Telegram 推送链上动作和价格行为提醒。",
-          en: "A Solana wallet and price-signal tracking system that watches target wallets in real time, surfaces activity, strategies, and alert history in a dashboard, and pushes on-chain actions plus price-behavior signals to Telegram.",
+          zh: "Solana 钱包追踪、价格信号和 Telegram 告警。",
+          en: "Solana wallet tracking, price signals, and Telegram alerts.",
         },
         metric: {
           zh: "链上钱包 + 策略提醒",
@@ -501,8 +501,8 @@ export const siteContent = {
           en: "Vibe Skills for Codex",
         },
         summary: {
-          zh: "一个面向 Codex 的 vibe 工作流技能包，把调研、PRD、技术设计、AGENTS 交接和迭代规划串成一套可复用的 MVP 工作流。",
-          en: "A Codex-first vibe workflow skill pack that connects research, PRD, technical design, AGENTS handoff, and iteration planning into one reusable MVP system.",
+          zh: "把调研、PRD、技术设计和交接串成 MVP 工作流。",
+          en: "Research, PRD, technical design, and handoff as an MVP workflow.",
         },
         metric: {
           zh: "MVP 工作流 + 技能包",
@@ -527,12 +527,12 @@ export const siteContent = {
         en: "Selected experiments",
       },
       title: {
-        zh: "这些方向正在长出形状，我还想继续折腾",
-        en: "Ideas in motion that keep changing shape as I learn from them.",
+        zh: "实验",
+        en: "Experiments",
       },
       description: {
-        zh: "现在能看到的是问题、假设和取舍，也能看到注意力正在去哪里。",
-        en: "These current bets reveal where my attention is going and what kinds of long-term product questions I want to keep exploring.",
+        zh: "还在推进的产品假设。",
+        en: "Product bets still in motion.",
       },
     },
     items: [
@@ -548,8 +548,8 @@ export const siteContent = {
           en: "Orbit Studio",
         },
         summary: {
-          zh: "一个面向个人品牌与内容系统的小型工作室框架，把站点、内容、社交分发和轻量转化做成一个更顺手的闭环。",
-          en: "A compact studio system for personal brands that connects site, content, distribution, and lightweight conversion into one smoother loop.",
+          zh: "个人品牌的站点、内容和分发系统。",
+          en: "A site, content, and distribution system for personal brands.",
         },
         highlights: [
           {
@@ -572,8 +572,8 @@ export const siteContent = {
               en: "Core problem",
             },
             body: {
-              zh: "大多数个人站只是展示面，缺少和内容、关系、转化之间的真实连接。",
-              en: "Many personal sites act like static showcases, with weak links to content, relationships, and conversion.",
+              zh: "让个人站连接内容、关系和转化。",
+              en: "Connect the personal site with content, relationships, and conversion.",
             },
           },
           {
@@ -582,8 +582,8 @@ export const siteContent = {
               en: "Current phase",
             },
             body: {
-              zh: "正在探索更轻量的内容后台与更自然的关注者入口，先找到正确工作流，再考虑产品化。",
-              en: "I am exploring a lighter content backend and more natural follower entry points before turning it into a product.",
+              zh: "测试轻量内容后台和关注者入口。",
+              en: "Testing a lightweight content backend and follower entry points.",
             },
           },
         ],
@@ -604,8 +604,8 @@ export const siteContent = {
           en: "Second Brain Playground",
         },
         summary: {
-          zh: "一个把阅读、摘录、思考和执行动作重新接起来的个人知识实验，希望让知识系统从收藏夹走向行动引擎。",
-          en: "A personal knowledge experiment that reconnects reading, extraction, reflection, and execution so a second brain can drive action from saved knowledge.",
+          zh: "把阅读、摘录、思考和行动重新接起来。",
+          en: "Reconnecting reading, notes, reflection, and action.",
         },
         highlights: [
           {
@@ -628,8 +628,8 @@ export const siteContent = {
               en: "Core problem",
             },
             body: {
-              zh: "很多知识管理系统很会收纳，却不擅长让信息在正确时间重新出现。",
-              en: "Most knowledge systems are good at storing information but weak at surfacing it at the moment it actually matters.",
+              zh: "让信息在正确时间重新出现。",
+              en: "Surface the right information at the right moment.",
             },
           },
           {
@@ -638,8 +638,8 @@ export const siteContent = {
               en: "Current phase",
             },
             body: {
-              zh: "正在测试检索方式、语义分层和轻提醒机制，重点放在刚好够用的体验。",
-              en: "I am testing retrieval models, semantic layers, and light reminder mechanics with an emphasis on enoughness over breadth.",
+              zh: "测试检索、语义分层和轻提醒。",
+              en: "Testing retrieval, semantic layers, and light reminders.",
             },
           },
         ],
@@ -657,12 +657,12 @@ export const siteContent = {
         en: "Writing",
       },
       title: {
-        zh: "很多想法，不写下来我自己也说不清",
-        en: "Writing that captures both the making and the thinking behind it.",
+        zh: "写作",
+        en: "Writing",
       },
       description: {
-        zh: "我写东西，通常是想把一个问题想清楚，再留下一份能复用的版本。",
-        en: "I publish reusable thinking, so the writing lives at the intersection of systems, products, content, and personal growth.",
+        zh: "把问题想清楚，留下可复用版本。",
+        en: "Reusable thinking from building and reflection.",
       },
     },
     items: [
@@ -678,8 +678,8 @@ export const siteContent = {
           en: "Why a personal brand needs an operating system",
         },
         summary: {
-          zh: "写给想把内容、产品和机会连接起来的人，核心是如何从“单次输出”过渡到“可复利的作品结构”。",
-          en: "For creators who want to connect content, products, and opportunities by moving from one-off outputs to a compounding body of work.",
+          zh: "从单次输出到可复利的作品结构。",
+          en: "From one-off output to a compounding body of work.",
         },
         meta: {
           zh: "长文 · 即将公开",
@@ -702,8 +702,8 @@ export const siteContent = {
           en: "Five missing layers between a clever AI demo and a product people keep using",
         },
         summary: {
-          zh: "模型能力只是起点，输入、记忆、反馈和出口要一起工作，这篇会拆我最常用的产品判断框架。",
-          en: "Raw model capability is the starting layer; the input, memory, feedback, and output layers have to work together. This essay unpacks the product lens I return to most.",
+          zh: "输入、记忆、反馈和出口一起决定产品体验。",
+          en: "Inputs, memory, feedback, and outputs shape the product.",
         },
         meta: {
           zh: "草稿中 · 即将公开",
@@ -726,8 +726,8 @@ export const siteContent = {
           en: "Why I started sharing what I learned while building",
         },
         summary: {
-          zh: "记录公开构建的转向：从结果导向到学习导向，也让输出更能帮助后来者理解真实过程。",
-          en: "A reflection on shifting public building from result-first updates to learning-first notes that make the process more useful for others.",
+          zh: "记录公开构建里更真实的学习过程。",
+          en: "Notes on the learning process behind public building.",
         },
         meta: {
           zh: "短文 · 即将公开",
@@ -747,8 +747,8 @@ export const siteContent = {
         en: "Connect",
       },
       title: {
-        zh: "如果你也在想这些问题，欢迎来聊",
-        en: "Three direct ways to follow or reach me.",
+        zh: "联系",
+        en: "Connect",
       },
       description: {
         zh: "代码、近况、邮件。",
@@ -844,12 +844,12 @@ export const siteContent = {
   },
   footerNote: {
     heading: {
-      zh: "这页还没定稿，我也还在继续折腾",
-      en: "This is a living map of what I am building and learning.",
+      zh: "持续更新",
+      en: "Still shipping",
     },
     body: {
-      zh: "这里的东西会继续改。有些会留下，有些会被推翻，有些只是阶段性答案。如果某个方向刚好和你有关，直接联系就行。",
-      en: "Everything here is subject to revision. Some projects will deepen, some will disappear, and some will be rebuilt from scratch. If one of these directions overlaps with what you are building, I would love to hear from you.",
+      zh: "这个页面会跟着我的项目、写作和实验继续变化。",
+      en: "This page will keep changing with my projects, writing, and experiments.",
     },
     backToTop: {
       zh: "回到顶部",
