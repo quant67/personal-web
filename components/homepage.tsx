@@ -23,11 +23,11 @@ import {
 
 import {
   siteContent,
-  type AccentTone,
   type IconKey,
   type Locale,
   type LocalizedText,
 } from "@/lib/site-content";
+import { HomepageIntroOverlay } from "@/components/homepage-intro";
 
 const STORAGE_KEY = "personal-web-locale";
 const DEFAULT_LOCALE: Locale = "zh";
@@ -61,65 +61,13 @@ const iconMap: Record<IconKey, ElementType<SVGProps<SVGSVGElement>>> = {
   globe: Globe2,
 };
 
-const iconTextStyles: Record<AccentTone, string> = {
-  accent: "text-accent",
-  secondary: "text-[color:var(--secondary-ink)]",
-  tertiary: "text-[color:var(--tertiary-ink)]",
-  quaternary: "text-[color:var(--quaternary-ink)]",
-};
-
-const toneStyles: Record<
-  AccentTone,
-  {
-    chip: string;
-    icon: string;
-    panel: string;
-    sectionLabel: string;
-    shadow: string;
-  }
-> = {
-  accent: {
-    chip: "bg-[color:var(--accent-soft)] text-accent",
-    icon: "bg-accent text-white",
-    panel: "bg-[color:var(--accent-soft)]",
-    sectionLabel: "text-accent",
-    shadow: "var(--accent)",
-  },
-  secondary: {
-    chip: "bg-[color:var(--secondary-soft)] text-[color:var(--secondary-ink)]",
-    icon: "bg-secondary text-foreground",
-    panel: "bg-[color:var(--secondary-soft)]",
-    sectionLabel: "text-[color:var(--secondary-ink)]",
-    shadow: "var(--secondary)",
-  },
-  tertiary: {
-    chip: "bg-[color:var(--tertiary-soft)] text-[color:var(--tertiary-ink)]",
-    icon: "bg-tertiary text-foreground",
-    panel: "bg-[color:var(--tertiary-soft)]",
-    sectionLabel: "text-[color:var(--tertiary-ink)]",
-    shadow: "var(--tertiary)",
-  },
-  quaternary: {
-    chip: "bg-[color:var(--quaternary-soft)] text-[color:var(--quaternary-ink)]",
-    icon: "bg-quaternary text-white",
-    panel: "bg-[color:var(--quaternary-soft)]",
-    sectionLabel: "text-[color:var(--quaternary-ink)]",
-    shadow: "var(--quaternary)",
-  },
-};
-
 export function Homepage() {
   const locale = useSyncExternalStore(
     subscribeToLocale,
     getLocaleSnapshot,
     getServerLocaleSnapshot,
   );
-  const projectCount = siteContent.openSourceProjects.items.length;
-  const hasSingleProject = projectCount === 1;
-  const hasTwoProjects = projectCount === 2;
-  const showProjectConnector = projectCount >= 3;
-  const writingTone: AccentTone = "tertiary";
-  const connectTone: AccentTone = "quaternary";
+  const [isIntroActive, setIsIntroActive] = useState(true);
 
   useEffect(() => {
     document.documentElement.lang = locale === "zh" ? "zh-CN" : "en";
@@ -128,134 +76,91 @@ export function Homepage() {
   const marqueeItems = [...siteContent.keywords.items, ...siteContent.keywords.items];
 
   return (
-    <div className="overflow-x-clip bg-background text-foreground">
-      <a className="sr-only focus:not-sr-only" href="#main-content">
-        {localized(siteContent.ui.skipToContent, locale)}
-      </a>
-      <SiteNav locale={locale} onLocaleChange={setStoredLocale} />
-      <main id="main-content" className="section-anchor pb-12 sm:pb-14">
-        <HeroSection locale={locale} />
-        <section aria-labelledby="keywords-heading" className="section-shell py-8 sm:py-10">
-          <h2 id="keywords-heading" className="sr-only">
-            {localized(siteContent.keywords.heading, locale)}
-          </h2>
-          <div className="marquee-shell">
-            <div className="marquee-track">
-              {marqueeItems.map((item, index) => (
-                <span
-                  key={`${item.en}-${index}`}
-                  className="marquee-chip"
-                  lang={localeLang(locale)}
-                >
-                  <span aria-hidden="true" className="marquee-dot" />
-                  <span>{localized(item, locale)}</span>
-                </span>
-              ))}
+    <div className="homepage-stage">
+      <div
+        className="homepage-scene overflow-x-clip bg-background text-foreground"
+        data-intro-active={isIntroActive}
+      >
+        <a className="sr-only focus:not-sr-only" href="#main-content">
+          {localized(siteContent.ui.skipToContent, locale)}
+        </a>
+        <SiteNav locale={locale} onLocaleChange={setStoredLocale} />
+        <main id="main-content" className="section-anchor pb-12 sm:pb-14">
+          <HeroSection locale={locale} />
+          <section aria-labelledby="keywords-heading" className="section-shell py-8 sm:py-10">
+            <h2 id="keywords-heading" className="sr-only">
+              {localized(siteContent.keywords.heading, locale)}
+            </h2>
+            <div className="marquee-shell">
+              <div className="marquee-track">
+                {marqueeItems.map((item, index) => (
+                  <span
+                    key={`${item.en}-${index}`}
+                    className="marquee-chip"
+                    lang={localeLang(locale)}
+                  >
+                    <span aria-hidden="true" className="marquee-dot" />
+                    <span>{localized(item, locale)}</span>
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
-        <HeroProof locale={locale} />
+          </section>
+          <HeroProof locale={locale} />
 
-        <section id="projects" className="section-anchor section-shell py-16 sm:py-20">
-          <SectionHeading
-            icon="code"
-            tone="accent"
-            heading={siteContent.openSourceProjects.heading}
-            locale={locale}
-          />
-          <div
-            className={cn(
-              "relative mt-6",
-              hasSingleProject && "max-w-4xl",
-              hasTwoProjects && "mx-auto max-w-6xl",
-            )}
-          >
-            {showProjectConnector ? <ProjectConnector /> : null}
-            <div
-              className={cn(
-                "grid gap-6",
-                hasSingleProject && "grid-cols-1",
-                hasTwoProjects && "lg:grid-cols-2",
-                projectCount >= 3 && "lg:grid-cols-3",
-              )}
-            >
-              {siteContent.openSourceProjects.items.map((item) => (
-                <StickerCard
+          <RoadJourney locale={locale} />
+
+          <section id="projects" className="section-anchor section-shell py-16 sm:py-20">
+            <SectionHeading
+              heading={siteContent.openSourceProjects.heading}
+              locale={locale}
+            />
+            <BuildLedger locale={locale} />
+          </section>
+
+          <section id="experiments" className="section-anchor section-shell py-16 sm:py-20">
+            <SectionHeading
+              heading={siteContent.experiments.heading}
+              locale={locale}
+            />
+            <FieldNotes locale={locale} />
+          </section>
+
+          <section id="writing" className="section-anchor section-shell py-16 sm:py-20">
+            <SectionHeading
+              heading={siteContent.writing.heading}
+              locale={locale}
+            />
+            <div className="editorial-list mt-8 md:mt-10">
+              {siteContent.writing.items.map((item) => (
+                <WritingCard
                   key={item.title.en}
-                  tone={item.tone}
-                  icon={item.icon}
-                  title={item.title}
-                  body={item.summary}
-                  eyebrow={item.metric}
-                  meta={item.stack}
-                  action={siteContent.ui.visitProject}
-                  href={item.href}
-                  ariaLabel={item.ariaLabel}
+                  item={item}
                   locale={locale}
                 />
               ))}
             </div>
-          </div>
-        </section>
+          </section>
 
-        <section id="experiments" className="section-anchor section-shell py-16 sm:py-20">
-          <SectionHeading
-            icon="sparkles"
-            tone="secondary"
-            heading={siteContent.experiments.heading}
-            locale={locale}
-          />
-          <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-            {siteContent.experiments.items.map((item, index) => (
-              <ExperimentCard
-                key={item.title.en}
-                item={item}
-                locale={locale}
-                mirrored={index % 2 === 1}
-              />
-            ))}
-          </div>
-        </section>
-
-        <section id="writing" className="section-anchor section-shell py-16 sm:py-20">
-          <SectionHeading
-            icon="book"
-            tone={writingTone}
-            heading={siteContent.writing.heading}
-            locale={locale}
-          />
-          <div className="editorial-list mt-8 md:mt-10">
-            {siteContent.writing.items.map((item) => (
-              <WritingCard
-                key={item.title.en}
-                item={item}
-                locale={locale}
-                tone={writingTone}
-              />
-            ))}
-          </div>
-        </section>
-
-        <section id="connect" className="section-anchor section-shell py-16 sm:py-20">
-          <SectionHeading
-            icon="globe"
-            tone={connectTone}
-            heading={siteContent.socialLinks.heading}
-            locale={locale}
-          />
-          <div className="contact-strip mt-8 md:mt-10">
-            {siteContent.socialLinks.items.map((item) => (
-              <SocialCard
-                key={item.title.en}
-                item={item}
-                locale={locale}
-                tone={connectTone}
-              />
-            ))}
-          </div>
-        </section>
-      </main>
-      <FooterNote locale={locale} />
+          <section id="connect" className="section-anchor section-shell py-16 sm:py-20">
+            <SectionHeading
+              heading={siteContent.socialLinks.heading}
+              locale={locale}
+            />
+            <div className="contact-strip mt-8 md:mt-10">
+              {siteContent.socialLinks.items.map((item) => (
+                <SocialCard
+                  key={item.title.en}
+                  item={item}
+                  locale={locale}
+                />
+              ))}
+            </div>
+          </section>
+        </main>
+        <FooterNote locale={locale} />
+      </div>
+      <HomepageIntroOverlay locale={locale} onActiveChange={setIsIntroActive} />
     </div>
   );
 }
@@ -345,22 +250,20 @@ function SiteNav({
     <header className="section-shell sticky top-0 z-50 pt-3 sm:pt-4">
       <div className="nav-sticker" data-scrolled={isScrolled}>
         <div className="nav-brand">
-          <Image
-            src="/icon.svg"
-            alt=""
-            aria-hidden="true"
-            width={44}
-            height={44}
-            className="h-11 w-11 shrink-0"
-          />
-          <div className="nav-brand-copy">
-            <p className="nav-title" lang={localeLang(locale)}>
-              {localized(siteContent.brand.name, locale)}
-            </p>
-            <p className="nav-domain">
-              sixsevenlabs.xyz
-            </p>
-          </div>
+          <a
+            href="#top"
+            className="nav-home-link"
+            aria-label={locale === "zh" ? "回到首页顶部" : "Back to top"}
+          >
+            <Image
+              src="/icon.svg"
+              alt=""
+              aria-hidden="true"
+              width={44}
+              height={44}
+              className="h-11 w-11 shrink-0"
+            />
+          </a>
         </div>
         <div className="nav-cluster">
           <nav
@@ -423,10 +326,10 @@ function HeroSection({ locale }: { locale: Locale }) {
               copy={siteContent.hero.title}
               locale={locale}
               className={cn(
-                "max-w-3xl font-heading font-extrabold tracking-[-0.05em] [text-wrap:balance]",
+                "max-w-3xl font-heading font-extrabold [text-wrap:balance]",
                 locale === "zh"
-                  ? "text-[clamp(2.3rem,4.8vw,4.7rem)] leading-[0.94]"
-                  : "max-w-2xl text-[clamp(1.95rem,4vw,4rem)] leading-[0.98]",
+                  ? "text-[clamp(2.3rem,4.8vw,4.7rem)] leading-[0.94] tracking-[-0.032em]"
+                  : "max-w-2xl text-[clamp(1.95rem,4vw,4rem)] leading-[0.98] tracking-[-0.05em]",
               )}
             />
             <LocalizedTextBlock
@@ -446,7 +349,7 @@ function HeroSection({ locale }: { locale: Locale }) {
                 label={siteContent.hero.primaryCta.label}
                 ariaLabel={siteContent.hero.primaryCta.ariaLabel}
                 locale={locale}
-                variant="primary"
+                variant="secondary"
               />
               <ActionLink
                 href={siteContent.hero.secondaryCta.href}
@@ -491,7 +394,7 @@ function HeroFigure({ locale }: { locale: Locale }) {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={localized(item.ariaLabel, locale)}
-                  className="hero-social-link text-foreground"
+                  className="hero-social-link"
                 >
                   <Icon aria-hidden="true" className="h-[22px] w-[22px]" strokeWidth={2} />
                 </a>
@@ -555,13 +458,9 @@ function HeroProof({ locale }: { locale: Locale }) {
 }
 
 function SectionHeading({
-  icon,
-  tone,
   heading,
   locale,
 }: {
-  icon: IconKey;
-  tone: AccentTone;
   heading: {
     eyebrow: LocalizedText;
     title: LocalizedText;
@@ -569,282 +468,317 @@ function SectionHeading({
   };
   locale: Locale;
 }) {
-  const Icon = iconMap[icon];
-  const toneStyle = toneStyles[tone];
-
   return (
     <div className="section-heading">
-      <div className="flex items-center gap-4 lg:pt-1">
-        <div className={cn("icon-medallion", toneStyle.icon)}>
-          <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
-        </div>
-        <LocalizedTextBlock
-          as="p"
-          copy={heading.eyebrow}
-          locale={locale}
-          className={cn(
-            "text-xs font-bold uppercase tracking-[0.24em]",
-            toneStyle.sectionLabel,
-          )}
-        />
-      </div>
+      <LocalizedTextBlock
+        as="p"
+        copy={heading.eyebrow}
+        locale={locale}
+        className="section-eyebrow"
+      />
       <div className="section-heading-copy">
         <LocalizedTextBlock
           as="h2"
           copy={heading.title}
           locale={locale}
-          className={cn(
-            "section-title",
-            locale === "zh" ? "text-[2rem] leading-[1.02] sm:text-[2.35rem]" : "text-[1.85rem] leading-tight sm:text-[2.25rem]",
-          )}
+          className="section-title"
         />
         <LocalizedTextBlock
           as="p"
           copy={heading.description}
           locale={locale}
-          className={cn(
-            "section-summary",
-            locale === "zh" ? "text-base leading-7" : "text-sm leading-6 sm:text-base sm:leading-7",
-          )}
+          className="section-summary"
         />
       </div>
     </div>
   );
 }
 
-function StickerCard({
-  tone,
-  icon,
-  title,
-  body,
-  eyebrow,
-  meta,
-  action,
-  href,
-  ariaLabel,
-  locale,
-}: {
-  tone: AccentTone;
-  icon: IconKey;
-  title: LocalizedText;
-  body: LocalizedText;
-  eyebrow: LocalizedText;
-  meta: LocalizedText;
-  action: LocalizedText;
-  href: string;
-  ariaLabel: LocalizedText;
-  locale: Locale;
-}) {
-  const Icon = iconMap[icon];
-  const toneStyle = toneStyles[tone];
+function RoadJourney({ locale }: { locale: Locale }) {
+  const [isRoadOpen, setIsRoadOpen] = useState(false);
 
   return (
-    <article
-      className="sticker-card"
-      style={
-        {
-          "--card-shadow": toneStyle.shadow,
-        } as CSSProperties
-      }
+    <section
+      id="experience"
+      className="road-journey section-anchor section-shell py-16 sm:py-20"
+      data-road-open={isRoadOpen}
     >
-      <div className={cn("floating-icon", toneStyle.icon)}>
-        <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
-      </div>
-      <div className="flex h-full flex-col gap-5 pt-6">
-        <div
-          className={cn(
-            "inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]",
-            toneStyle.chip,
-          )}
-          lang={localeLang(locale)}
-        >
-          {localized(eyebrow, locale)}
+      <SectionHeading heading={siteContent.experience.heading} locale={locale} />
+      <div
+        className="road-journey-shell mt-8 md:mt-10"
+        onPointerEnter={() => setIsRoadOpen(true)}
+      >
+        <div className="road-stage">
+          <svg
+            aria-hidden="true"
+            className="road-sketch-svg"
+            viewBox="0 0 620 360"
+            fill="none"
+          >
+            <path
+              className="road-paper-line road-paper-line-one"
+              d="M254 26C183 84 166 149 209 205C251 261 235 313 181 342"
+            />
+            <path
+              className="road-paper-line road-paper-line-two"
+              d="M320 48C248 97 226 149 268 204C309 258 296 314 236 348"
+            />
+            <path
+              className="road-path-shadow"
+              d="M286 36C214 86 191 145 233 200C277 257 264 306 208 329"
+            />
+            <path
+              className="road-path"
+              d="M286 36C214 86 191 145 233 200C277 257 264 306 208 329"
+            />
+            <path
+              className="road-lane"
+              d="M286 36C214 86 191 145 233 200C277 257 264 306 208 329"
+            />
+            <path
+              className="road-path-accent"
+              d="M286 36C214 86 191 145 233 200C277 257 264 306 208 329"
+            />
+            {[0, 1, 2, 3].map((index) => (
+              <g
+                key={siteContent.experience.items[index].title.en}
+                className="road-stop"
+                style={
+                  {
+                    "--stop-index": index,
+                    "--stop-delay": ["360ms", "850ms", "1500ms", "2060ms"][index],
+                  } as CSSProperties
+                }
+              >
+                <circle
+                  cx={[286, 215, 238, 208][index]}
+                  cy={[36, 128, 226, 329][index]}
+                  r="18"
+                />
+                <text
+                  x={[286, 215, 238, 208][index]}
+                  y={[41, 133, 231, 334][index]}
+                  textAnchor="middle"
+                >
+                  {siteContent.experience.items[index].marker}
+                </text>
+              </g>
+            ))}
+            <g className="road-car-svg" aria-hidden="true">
+              <ellipse className="road-car-shadow" cx="0" cy="36" rx="28" ry="8" />
+              <rect className="road-car-wheel road-car-wheel-front-left" x="-29" y="-24" width="8" height="15" rx="4" />
+              <rect className="road-car-wheel road-car-wheel-front-right" x="21" y="-24" width="8" height="15" rx="4" />
+              <rect className="road-car-wheel road-car-wheel-back-left" x="-29" y="12" width="8" height="15" rx="4" />
+              <rect className="road-car-wheel road-car-wheel-back-right" x="21" y="12" width="8" height="15" rx="4" />
+              <path
+                className="road-car-face"
+                d="M0 -38C17 -36 25 -23 25 -3C25 21 16 35 0 39C-16 35 -25 21 -25 -3C-25 -23 -17 -36 0 -38Z"
+              />
+              <path className="road-car-fender road-car-fender-left" d="M-20 -22C-25 -8 -24 16 -17 30" />
+              <path className="road-car-fender road-car-fender-right" d="M20 -22C25 -8 24 16 17 30" />
+              <path className="road-car-roof" d="M-14 -15C-10 -28 10 -28 14 -15L15 14C11 25 -11 25 -15 14L-14 -15Z" />
+              <path className="road-car-window road-car-window-back" d="M-10 -17C-7 -24 7 -24 10 -17L8 -9H-8L-10 -17Z" />
+              <path className="road-car-window road-car-window-front" d="M-10 12H10L7 24H-7L-10 12Z" />
+              <path className="road-car-window-seam" d="M-12 2H12" />
+              <path className="road-car-center" d="M0 -31V31" />
+              <path className="road-car-bumper" d="M-11 -30C-4 -34 4 -34 11 -30" />
+              <path className="road-car-hood" d="M-12 29C-5 33 5 33 12 29" />
+              <circle className="road-car-light road-car-light-left" cx="-8" cy="28" r="2.4" />
+              <circle className="road-car-light road-car-light-right" cx="8" cy="28" r="2.4" />
+            </g>
+          </svg>
+          <button
+            type="button"
+            className="road-car-button"
+            aria-expanded={isRoadOpen}
+            aria-controls="road-journey-panels"
+            onClick={() => setIsRoadOpen(true)}
+            onFocus={() => setIsRoadOpen(true)}
+          >
+            <span className="sr-only">
+              {locale === "zh" ? "展开个人经历" : "Expand personal journey"}
+            </span>
+          </button>
         </div>
-        <LocalizedTextBlock
-          as="h3"
-          copy={title}
-          locale={locale}
-          className={cn(
-            "font-heading font-extrabold tracking-[-0.04em]",
-            locale === "zh" ? "text-2xl" : "text-[1.65rem] leading-tight",
-          )}
-        />
-        <LocalizedTextBlock
-          as="p"
-          copy={body}
-          locale={locale}
-          className={cn(
-            locale === "zh"
-              ? "text-base leading-7 text-foreground"
-              : "text-sm leading-6 text-muted-foreground",
-          )}
-        />
-        <div className="mt-auto rounded-[18px] border-2 border-dashed border-foreground/25 bg-muted/60 px-4 py-3">
-          <p className="text-sm font-semibold text-foreground" lang={localeLang(locale)}>
-            {localized(meta, locale)}
-          </p>
-        </div>
-        <ActionLink
-          href={href}
-          label={action}
-          ariaLabel={ariaLabel}
-          locale={locale}
-          variant="secondary"
-          external
-          fullWidth
-        />
+
+        <ol id="road-journey-panels" className="road-panels" aria-hidden={!isRoadOpen}>
+          {siteContent.experience.items.map((item, index) => (
+            <li
+              key={item.title.en}
+              className="road-panel"
+              style={{ "--panel-index": index } as CSSProperties}
+            >
+              <article className="road-panel-card">
+                <div className="road-panel-marker" aria-hidden="true">
+                  {item.marker}
+                </div>
+                <div className="road-panel-copy">
+                  <LocalizedTextBlock
+                    as="h3"
+                    copy={item.title}
+                    locale={locale}
+                    className="road-panel-title"
+                  />
+                  <LocalizedTextBlock
+                    as="p"
+                    copy={item.summary}
+                    locale={locale}
+                    className="road-panel-summary"
+                  />
+                </div>
+              </article>
+            </li>
+          ))}
+        </ol>
       </div>
-    </article>
+    </section>
   );
 }
 
-function ExperimentCard({
-  item,
-  locale,
-  mirrored,
-}: {
-  item: (typeof siteContent.experiments.items)[number];
-  locale: Locale;
-  mirrored?: boolean;
-}) {
-  const Icon = iconMap[item.icon];
-  const toneStyle = toneStyles[item.tone];
-  const experimentHref = getSafeContentHref("href" in item ? item.href : undefined);
-
+function BuildLedger({ locale }: { locale: Locale }) {
   return (
-    <article
-      className={cn(
-        "sticker-card grid gap-6 overflow-hidden lg:grid-cols-[0.88fr_1.12fr]",
-        mirrored && "lg:grid-cols-[1.12fr_0.88fr]",
-      )}
-      style={
-        {
-          "--card-shadow": toneStyle.shadow,
-        } as CSSProperties
-      }
-    >
-      <div
-        className={cn(
-          "relative min-h-[16rem] overflow-hidden rounded-[24px] border-2 border-foreground p-5",
-          toneStyle.panel,
-        )}
-      >
-        <div aria-hidden="true" className="stripe-fill absolute inset-0 opacity-40" />
-        <div className="relative flex h-full flex-col justify-between">
-          <div className={cn("icon-medallion", toneStyle.icon)}>
-            <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.5} />
-          </div>
-          <div className="space-y-3">
-            {item.highlights.map((highlight, index) => (
-              <div
-                key={highlight.en}
-                className={cn(
-                  "max-w-[14rem] rounded-full border-2 border-foreground px-4 py-2 text-sm font-semibold shadow-[4px_4px_0_0_var(--foreground)]",
-                  index === 0 && "bg-card text-foreground",
-                  index === 1 && "bg-[color:var(--tertiary-soft)] text-[color:var(--tertiary-ink)]",
-                  index === 2 && "bg-[color:var(--quaternary-soft)] text-[color:var(--quaternary-ink)]",
-                )}
-                lang={localeLang(locale)}
-              >
-                {localized(highlight, locale)}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className={cn("flex flex-col justify-between gap-5", mirrored && "lg:order-first")}>
-        <div
-          className={cn(
-            "inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]",
-            toneStyle.chip,
-          )}
-          lang={localeLang(locale)}
-        >
-          {localized(item.label, locale)}
-        </div>
-        <LocalizedTextBlock
-          as="h3"
-          copy={item.title}
-          locale={locale}
-          className={cn(
-            "font-heading font-extrabold tracking-[-0.05em]",
-            locale === "zh" ? "text-3xl" : "text-[2rem] leading-tight",
-          )}
-        />
-        <LocalizedTextBlock
-          as="p"
-          copy={item.summary}
-          locale={locale}
-          className={cn(
-            locale === "zh"
-              ? "text-base leading-7 text-foreground"
-              : "text-sm leading-6 text-muted-foreground",
-          )}
-        />
-        <div className="grid gap-3 sm:grid-cols-2">
-          {item.details.map((detail) => (
-            <div
-              key={detail.title.en}
-              className="rounded-[18px] border-2 border-foreground bg-card px-4 py-4 shadow-[4px_4px_0_0_var(--muted)]"
-            >
-              <p
-                className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground"
-                lang={localeLang(locale)}
-              >
-                {localized(detail.title, locale)}
-              </p>
-              <p
-                className="mt-3 text-sm leading-6 text-muted-foreground"
-                lang={localeLang(locale)}
-              >
-                {localized(detail.body, locale)}
-              </p>
+    <div className="build-ledger mt-8 md:mt-10">
+      {siteContent.openSourceProjects.items.map((item, index) => {
+        return (
+          <article key={item.title.en} className="build-ledger-row">
+            <div className="build-ledger-index" aria-hidden="true">
+              {String(index + 1).padStart(2, "0")}
             </div>
-          ))}
-        </div>
-        {experimentHref ? (
-          <ActionLink
-            href={experimentHref}
-            label={siteContent.ui.visitExperiment}
-            ariaLabel={item.ariaLabel}
-            locale={locale}
-            variant="primary"
-            external
-          />
-        ) : (
-          <ActionLink
-            href="#connect"
-            label={siteContent.ui.requestPreview}
-            ariaLabel={item.ariaLabel}
-            locale={locale}
-            variant="primary"
-          />
-        )}
-      </div>
-    </article>
+            <div className="build-ledger-main">
+              <div className="build-ledger-meta" lang={localeLang(locale)}>
+                {localized(item.metric, locale)}
+              </div>
+              <LocalizedTextBlock
+                as="h3"
+                copy={item.title}
+                locale={locale}
+                className="build-ledger-title"
+              />
+              <LocalizedTextBlock
+                as="p"
+                copy={item.summary}
+                locale={locale}
+                className="build-ledger-summary"
+              />
+            </div>
+            <div className="build-ledger-side">
+              <p
+                className="build-ledger-stack"
+                lang={localeLang(locale)}
+              >
+                {localized(item.stack, locale)}
+              </p>
+              <ActionLink
+                href={item.href}
+                label={siteContent.ui.visitProject}
+                ariaLabel={item.ariaLabel}
+                locale={locale}
+                variant="secondary"
+                external
+              />
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
+
+function FieldNotes({ locale }: { locale: Locale }) {
+  return (
+    <div className="field-notes mt-8 md:mt-10">
+      {siteContent.experiments.items.map((item, index) => {
+        const experimentHref = getSafeContentHref("href" in item ? item.href : undefined);
+
+        return (
+          <article
+            key={item.title.en}
+            className={cn("field-note", index % 2 === 1 && "field-note-alt")}
+          >
+            <div className="field-note-map">
+              <div className="field-note-index">{String(index + 1).padStart(2, "0")}</div>
+              <div className="field-note-label" lang={localeLang(locale)}>
+                {localized(item.label, locale)}
+              </div>
+              <div className="field-note-tags">
+                {item.highlights.map((highlight) => (
+                  <span key={highlight.en} lang={localeLang(locale)}>
+                    {localized(highlight, locale)}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="field-note-copy">
+              <LocalizedTextBlock
+                as="h3"
+                copy={item.title}
+                locale={locale}
+                className="field-note-title"
+              />
+              <LocalizedTextBlock
+                as="p"
+                copy={item.summary}
+                locale={locale}
+                className="field-note-summary"
+              />
+              <div className="field-note-details">
+                {item.details.map((detail) => (
+                  <div key={detail.title.en} className="field-note-detail">
+                    <p
+                      className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground"
+                      lang={localeLang(locale)}
+                    >
+                      {localized(detail.title, locale)}
+                    </p>
+                    <p
+                      className="mt-2 text-sm leading-6 text-muted-foreground"
+                      lang={localeLang(locale)}
+                    >
+                      {localized(detail.body, locale)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              {experimentHref ? (
+                <ActionLink
+                  href={experimentHref}
+                  label={siteContent.ui.visitExperiment}
+                  ariaLabel={item.ariaLabel}
+                  locale={locale}
+                  variant="primary"
+                  external
+                />
+              ) : (
+                <ActionLink
+                  href="#connect"
+                  label={siteContent.ui.requestPreview}
+                  ariaLabel={item.ariaLabel}
+                  locale={locale}
+                  variant="primary"
+                />
+              )}
+            </div>
+          </article>
+        );
+      })}
+    </div>
   );
 }
 
 function WritingCard({
   item,
   locale,
-  tone,
 }: {
   item: (typeof siteContent.writing.items)[number];
   locale: Locale;
-  tone: AccentTone;
 }) {
-  const toneStyle = toneStyles[tone];
   const articleHref = getSafeContentHref("href" in item ? item.href : undefined);
 
   return (
     <article className="editorial-entry">
       <div className="editorial-meta">
         <span
-          className={cn(
-            "inline-flex w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.18em]",
-            toneStyle.chip,
-          )}
+          className="editorial-category"
           lang={localeLang(locale)}
         >
           {localized(item.category, locale)}
@@ -861,22 +795,14 @@ function WritingCard({
           as="h3"
           copy={item.title}
           locale={locale}
-          className={cn(
-            "font-heading font-extrabold tracking-[-0.04em] text-foreground",
-            locale === "zh" ? "text-[1.85rem] leading-[1.08]" : "text-[1.65rem] leading-tight",
-          )}
+          className="editorial-title"
         />
       </div>
       <LocalizedTextBlock
         as="p"
         copy={item.summary}
         locale={locale}
-        className={cn(
-          "editorial-summary",
-          locale === "zh"
-            ? "text-base leading-7 text-foreground"
-            : "text-sm leading-6 text-muted-foreground",
-        )}
+        className="editorial-summary"
       />
       <div className="editorial-action">
         {articleHref ? (
@@ -885,7 +811,7 @@ function WritingCard({
             target="_blank"
             rel="noreferrer"
             aria-label={localized(item.ariaLabel, locale)}
-            className={cn("editorial-link", toneStyle.sectionLabel)}
+            className="editorial-link"
             lang={localeLang(locale)}
           >
             <span>{localized(siteContent.ui.readArticle, locale)}</span>
@@ -893,7 +819,7 @@ function WritingCard({
           </a>
         ) : (
           <span
-            className={cn("editorial-status", toneStyle.sectionLabel)}
+            className="editorial-status"
             lang={localeLang(locale)}
           >
             {localized(siteContent.ui.comingSoon, locale)}
@@ -907,14 +833,11 @@ function WritingCard({
 function SocialCard({
   item,
   locale,
-  tone,
 }: {
   item: (typeof siteContent.socialLinks.items)[number];
   locale: Locale;
-  tone: AccentTone;
 }) {
   const Icon = iconMap[item.icon];
-  const toneStyle = toneStyles[tone];
 
   return (
     <a
@@ -924,7 +847,7 @@ function SocialCard({
       aria-label={localized(item.ariaLabel, locale)}
       className="group contact-item"
     >
-      <div className={cn("contact-icon", toneStyle.icon)}>
+      <div className="contact-icon">
         <Icon aria-hidden="true" className="h-4 w-4 shrink-0" strokeWidth={2.3} />
       </div>
       <div className="min-w-0 flex-1">
@@ -941,7 +864,7 @@ function SocialCard({
       <div className="contact-arrow-wrap">
         <ArrowUpRight
           aria-hidden="true"
-          className={cn("contact-arrow", iconTextStyles[tone])}
+          className="contact-arrow"
           strokeWidth={2.5}
         />
       </div>
@@ -951,29 +874,21 @@ function SocialCard({
 
 function FooterNote({ locale }: { locale: Locale }) {
   return (
-    <footer className="section-shell pb-12 pt-4">
-      <div className="rounded-[32px] border-2 border-foreground bg-card px-6 py-8 shadow-[8px_8px_0_0_var(--muted)] sm:px-8">
+    <footer className="section-shell site-footer pb-12 pt-4">
+      <div className="footer-note">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
             <LocalizedTextBlock
               as="h2"
               copy={siteContent.footerNote.heading}
               locale={locale}
-              className={cn(
-                "font-heading font-extrabold tracking-[-0.04em]",
-                locale === "zh" ? "text-3xl" : "text-[2rem] leading-tight",
-              )}
+              className="footer-title"
             />
             <LocalizedTextBlock
               as="p"
               copy={siteContent.footerNote.body}
               locale={locale}
-              className={cn(
-                "mt-4",
-                locale === "zh"
-                  ? "text-base leading-7 text-foreground"
-                  : "text-sm leading-6 text-muted-foreground",
-              )}
+              className="footer-body"
             />
           </div>
           <ActionLink
@@ -986,25 +901,6 @@ function FooterNote({ locale }: { locale: Locale }) {
         </div>
       </div>
     </footer>
-  );
-}
-
-function ProjectConnector() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="pointer-events-none absolute left-[8%] top-10 hidden h-32 w-[84%] lg:block"
-      fill="none"
-      viewBox="0 0 1000 180"
-    >
-      <path
-        d="M20 88C120 25 250 24 342 88C448 160 560 152 662 88C770 20 878 22 980 88"
-        stroke="var(--foreground)"
-        strokeDasharray="12 14"
-        strokeLinecap="round"
-        strokeWidth="4"
-      />
-    </svg>
   );
 }
 
