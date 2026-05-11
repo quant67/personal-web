@@ -518,6 +518,31 @@ export const siteContent = {
           en: "Open the Vibe Skills for Codex repository",
         },
       },
+      {
+        icon: "book",
+        tone: "tertiary",
+        title: {
+          zh: "Pomodoro Timer",
+          en: "Pomodoro Timer",
+        },
+        summary: {
+          zh: "Obsidian 原生番茄钟插件，支持专注计时、任务管理和 Daily Note 同步。",
+          en: "A native Obsidian Pomodoro plugin for focus timers, task management, and Daily Note sync.",
+        },
+        metric: {
+          zh: "专注计时 + 笔记任务同步",
+          en: "Focus timer + note task sync",
+        },
+        stack: {
+          zh: "TypeScript / esbuild / Obsidian Plugin API",
+          en: "TypeScript / esbuild / Obsidian Plugin API",
+        },
+        href: "https://github.com/quant67/pomodoro-timer",
+        ariaLabel: {
+          zh: "打开 Pomodoro Timer 项目仓库",
+          en: "Open the Pomodoro Timer repository",
+        },
+      },
     ],
   },
   experiments: {
